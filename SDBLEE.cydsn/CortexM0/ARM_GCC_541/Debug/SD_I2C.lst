@@ -1,0 +1,3011 @@
+ARM GAS  C:\Users\sergio\AppData\Local\Temp\ccXoQ2wk.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m0
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 0
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.syntax unified
+  15              		.file	"SD_I2C.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.section	.text.Read_sensor_word,"ax",%progbits
+  20              		.align	2
+  21              		.global	Read_sensor_word
+  22              		.code	16
+  23              		.thumb_func
+  24              		.type	Read_sensor_word, %function
+  25              	Read_sensor_word:
+  26              	.LFB35:
+  27              		.file 1 "SD_I2C.c"
+   1:SD_I2C.c      **** /* ========================================
+   2:SD_I2C.c      ****  *
+   3:SD_I2C.c      ****  * Copyright YOUR COMPANY, THE YEAR
+   4:SD_I2C.c      ****  * All Rights Reserved
+   5:SD_I2C.c      ****  * UNPUBLISHED, LICENSED SOFTWARE.
+   6:SD_I2C.c      ****  *
+   7:SD_I2C.c      ****  * CONFIDENTIAL AND PROPRIETARY INFORMATION
+   8:SD_I2C.c      ****  * WHICH IS THE PROPERTY OF your company.
+   9:SD_I2C.c      ****  *
+  10:SD_I2C.c      ****  * ========================================
+  11:SD_I2C.c      **** */
+  12:SD_I2C.c      **** 
+  13:SD_I2C.c      **** #include "SD_I2C.h"
+  14:SD_I2C.c      **** 
+  15:SD_I2C.c      **** 
+  16:SD_I2C.c      **** uint16 Read_sensor_word(uint32 address, uint8 reg){
+  28              		.loc 1 16 0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 8
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32              	.LVL0:
+  33 0000 10B5     		push	{r4, lr}
+  34              		.cfi_def_cfa_offset 8
+  35              		.cfi_offset 4, -8
+  36              		.cfi_offset 14, -4
+  37 0002 82B0     		sub	sp, sp, #8
+  38              		.cfi_def_cfa_offset 16
+  39 0004 0400     		movs	r4, r0
+  40 0006 0A00     		movs	r2, r1
+  17:SD_I2C.c      ****     
+ARM GAS  C:\Users\sergio\AppData\Local\Temp\ccXoQ2wk.s 			page 2
+
+
+  18:SD_I2C.c      ****     uint8 write_buff[1] ={0};
+  41              		.loc 1 18 0
+  42 0008 01A9     		add	r1, sp, #4
+  43              	.LVL1:
+  44 000a 0023     		movs	r3, #0
+  19:SD_I2C.c      ****     write_buff[0] = reg;
+  45              		.loc 1 19 0
+  46 000c 0A70     		strb	r2, [r1]
+  20:SD_I2C.c      ****     
+  21:SD_I2C.c      ****   volatile  uint8 read_buff[2] = {0,0};
+  47              		.loc 1 21 0
+  48 000e 6A46     		mov	r2, sp
+  49 0010 1370     		strb	r3, [r2]
+  50 0012 5370     		strb	r3, [r2, #1]
+  22:SD_I2C.c      ****     
+  23:SD_I2C.c      ****     I2C_1_I2CMasterWriteBuf(address, (uint8 *) write_buff, 1, I2C_1_I2C_MODE_NO_STOP);
+  51              		.loc 1 23 0
+  52 0014 0233     		adds	r3, r3, #2
+  53 0016 0122     		movs	r2, #1
+  54 0018 FFF7FEFF 		bl	I2C_1_I2CMasterWriteBuf
+  55              	.LVL2:
+  56              	.L2:
+  24:SD_I2C.c      ****     while((I2C_1_I2CMasterStatus() & I2C_1_I2C_MSTAT_WR_CMPLT) == 0){}
+  57              		.loc 1 24 0 discriminator 1
+  58 001c FFF7FEFF 		bl	I2C_1_I2CMasterStatus
+  59              	.LVL3:
+  60 0020 8307     		lsls	r3, r0, #30
+  61 0022 FBD5     		bpl	.L2
+  25:SD_I2C.c      ****     
+  26:SD_I2C.c      ****      I2C_1_I2CMasterReadBuf(address, (uint8 *) read_buff, 2, I2C_1_I2C_MODE_REPEAT_START);
+  62              		.loc 1 26 0
+  63 0024 0123     		movs	r3, #1
+  64 0026 0222     		movs	r2, #2
+  65 0028 6946     		mov	r1, sp
+  66 002a 2000     		movs	r0, r4
+  67 002c FFF7FEFF 		bl	I2C_1_I2CMasterReadBuf
+  68              	.LVL4:
+  69              	.L3:
+  27:SD_I2C.c      ****     while((I2C_1_I2CMasterStatus() & I2C_1_I2C_MSTAT_RD_CMPLT) == 0){}
+  70              		.loc 1 27 0 discriminator 1
+  71 0030 FFF7FEFF 		bl	I2C_1_I2CMasterStatus
+  72              	.LVL5:
+  73 0034 C307     		lsls	r3, r0, #31
+  74 0036 FBD5     		bpl	.L3
+  28:SD_I2C.c      ****     
+  29:SD_I2C.c      ****     return ((unsigned int) read_buff[0] << 8) | (unsigned int) read_buff[1];
+  75              		.loc 1 29 0
+  76 0038 6B46     		mov	r3, sp
+  77 003a 1878     		ldrb	r0, [r3]
+  78 003c 5B78     		ldrb	r3, [r3, #1]
+  79 003e 0002     		lsls	r0, r0, #8
+  80 0040 1843     		orrs	r0, r3
+  30:SD_I2C.c      **** }
+  81              		.loc 1 30 0
+  82 0042 02B0     		add	sp, sp, #8
+  83              		@ sp needed
+  84              	.LVL6:
+ARM GAS  C:\Users\sergio\AppData\Local\Temp\ccXoQ2wk.s 			page 3
+
+
+  85 0044 10BD     		pop	{r4, pc}
+  86              		.cfi_endproc
+  87              	.LFE35:
+  88              		.size	Read_sensor_word, .-Read_sensor_word
+  89 0046 C046     		.section	.text.Read_sensor_byte,"ax",%progbits
+  90              		.align	2
+  91              		.global	Read_sensor_byte
+  92              		.code	16
+  93              		.thumb_func
+  94              		.type	Read_sensor_byte, %function
+  95              	Read_sensor_byte:
+  96              	.LFB36:
+  31:SD_I2C.c      **** 
+  32:SD_I2C.c      **** uint8 Read_sensor_byte(uint32 address, uint8 reg){
+  97              		.loc 1 32 0
+  98              		.cfi_startproc
+  99              		@ args = 0, pretend = 0, frame = 8
+ 100              		@ frame_needed = 0, uses_anonymous_args = 0
+ 101              	.LVL7:
+ 102 0000 10B5     		push	{r4, lr}
+ 103              		.cfi_def_cfa_offset 8
+ 104              		.cfi_offset 4, -8
+ 105              		.cfi_offset 14, -4
+ 106 0002 82B0     		sub	sp, sp, #8
+ 107              		.cfi_def_cfa_offset 16
+ 108 0004 0400     		movs	r4, r0
+ 109 0006 0A00     		movs	r2, r1
+  33:SD_I2C.c      ****     
+  34:SD_I2C.c      ****     uint8 write_buff[1] ={0};
+ 110              		.loc 1 34 0
+ 111 0008 01A9     		add	r1, sp, #4
+ 112              	.LVL8:
+ 113 000a 0023     		movs	r3, #0
+  35:SD_I2C.c      ****     write_buff[0] = reg;
+ 114              		.loc 1 35 0
+ 115 000c 0A70     		strb	r2, [r1]
+  36:SD_I2C.c      ****     
+  37:SD_I2C.c      ****   volatile  uint8 read_buff[2] = {0,0};
+ 116              		.loc 1 37 0
+ 117 000e 6A46     		mov	r2, sp
+ 118 0010 1370     		strb	r3, [r2]
+ 119 0012 5370     		strb	r3, [r2, #1]
+  38:SD_I2C.c      ****     
+  39:SD_I2C.c      ****     I2C_1_I2CMasterWriteBuf(address, (uint8 *) write_buff, 1, I2C_1_I2C_MODE_NO_STOP);
+ 120              		.loc 1 39 0
+ 121 0014 0233     		adds	r3, r3, #2
+ 122 0016 0122     		movs	r2, #1
+ 123 0018 FFF7FEFF 		bl	I2C_1_I2CMasterWriteBuf
+ 124              	.LVL9:
+ 125              	.L5:
+  40:SD_I2C.c      ****     while((I2C_1_I2CMasterStatus() & I2C_1_I2C_MSTAT_WR_CMPLT) == 0){}
+ 126              		.loc 1 40 0 discriminator 1
+ 127 001c FFF7FEFF 		bl	I2C_1_I2CMasterStatus
+ 128              	.LVL10:
+ 129 0020 8307     		lsls	r3, r0, #30
+ 130 0022 FBD5     		bpl	.L5
+  41:SD_I2C.c      ****     
+ARM GAS  C:\Users\sergio\AppData\Local\Temp\ccXoQ2wk.s 			page 4
+
+
+  42:SD_I2C.c      ****      I2C_1_I2CMasterReadBuf(address, (uint8 *) read_buff, 1, I2C_1_I2C_MODE_REPEAT_START);
+ 131              		.loc 1 42 0
+ 132 0024 0123     		movs	r3, #1
+ 133 0026 0122     		movs	r2, #1
+ 134 0028 6946     		mov	r1, sp
+ 135 002a 2000     		movs	r0, r4
+ 136 002c FFF7FEFF 		bl	I2C_1_I2CMasterReadBuf
+ 137              	.LVL11:
+ 138              	.L6:
+  43:SD_I2C.c      ****     while((I2C_1_I2CMasterStatus() & I2C_1_I2C_MSTAT_RD_CMPLT) == 0){}
+ 139              		.loc 1 43 0 discriminator 1
+ 140 0030 FFF7FEFF 		bl	I2C_1_I2CMasterStatus
+ 141              	.LVL12:
+ 142 0034 C307     		lsls	r3, r0, #31
+ 143 0036 FBD5     		bpl	.L6
+  44:SD_I2C.c      ****     
+  45:SD_I2C.c      ****     return read_buff[0];
+ 144              		.loc 1 45 0
+ 145 0038 6B46     		mov	r3, sp
+ 146 003a 1878     		ldrb	r0, [r3]
+ 147 003c C0B2     		uxtb	r0, r0
+  46:SD_I2C.c      **** }
+ 148              		.loc 1 46 0
+ 149 003e 02B0     		add	sp, sp, #8
+ 150              		@ sp needed
+ 151              	.LVL13:
+ 152 0040 10BD     		pop	{r4, pc}
+ 153              		.cfi_endproc
+ 154              	.LFE36:
+ 155              		.size	Read_sensor_byte, .-Read_sensor_byte
+ 156 0042 C046     		.section	.text.test_sensor,"ax",%progbits
+ 157              		.align	2
+ 158              		.global	test_sensor
+ 159              		.code	16
+ 160              		.thumb_func
+ 161              		.type	test_sensor, %function
+ 162              	test_sensor:
+ 163              	.LFB37:
+  47:SD_I2C.c      **** 
+  48:SD_I2C.c      **** int test_sensor(uint32 address, uint8 reg){
+ 164              		.loc 1 48 0
+ 165              		.cfi_startproc
+ 166              		@ args = 0, pretend = 0, frame = 0
+ 167              		@ frame_needed = 0, uses_anonymous_args = 0
+ 168              	.LVL14:
+ 169 0000 10B5     		push	{r4, lr}
+ 170              		.cfi_def_cfa_offset 8
+ 171              		.cfi_offset 4, -8
+ 172              		.cfi_offset 14, -4
+  49:SD_I2C.c      **** 
+  50:SD_I2C.c      **** return Read_sensor_byte(address, reg) != 0x00 ? 1 : 0;
+ 173              		.loc 1 50 0
+ 174 0002 FFF7FEFF 		bl	Read_sensor_byte
+ 175              	.LVL15:
+ 176 0006 431E     		subs	r3, r0, #1
+ 177 0008 9841     		sbcs	r0, r0, r3
+ 178 000a C0B2     		uxtb	r0, r0
+ARM GAS  C:\Users\sergio\AppData\Local\Temp\ccXoQ2wk.s 			page 5
+
+
+  51:SD_I2C.c      **** 
+  52:SD_I2C.c      **** }
+ 179              		.loc 1 52 0
+ 180              		@ sp needed
+ 181 000c 10BD     		pop	{r4, pc}
+ 182              		.cfi_endproc
+ 183              	.LFE37:
+ 184              		.size	test_sensor, .-test_sensor
+ 185 000e C046     		.section	.text.humidity_read,"ax",%progbits
+ 186              		.align	2
+ 187              		.global	humidity_read
+ 188              		.code	16
+ 189              		.thumb_func
+ 190              		.type	humidity_read, %function
+ 191              	humidity_read:
+ 192              	.LFB38:
+  53:SD_I2C.c      **** uint16 humidity_read(uint32 address, uint8 reg){
+ 193              		.loc 1 53 0
+ 194              		.cfi_startproc
+ 195              		@ args = 0, pretend = 0, frame = 0
+ 196              		@ frame_needed = 0, uses_anonymous_args = 0
+ 197              	.LVL16:
+ 198 0000 10B5     		push	{r4, lr}
+ 199              		.cfi_def_cfa_offset 8
+ 200              		.cfi_offset 4, -8
+ 201              		.cfi_offset 14, -4
+ 202              	.LVL17:
+  54:SD_I2C.c      ****     uint16 humidity = 0;
+  55:SD_I2C.c      ****     humidity = ((125 * Read_sensor_word(address, reg))/65536)-6;
+ 203              		.loc 1 55 0
+ 204 0002 FFF7FEFF 		bl	Read_sensor_word
+ 205              	.LVL18:
+ 206 0006 4301     		lsls	r3, r0, #5
+ 207 0008 1B1A     		subs	r3, r3, r0
+ 208 000a 9B00     		lsls	r3, r3, #2
+ 209 000c 1818     		adds	r0, r3, r0
+ 210 000e C317     		asrs	r3, r0, #31
+ 211 0010 1B04     		lsls	r3, r3, #16
+ 212 0012 1B0C     		lsrs	r3, r3, #16
+ 213 0014 1818     		adds	r0, r3, r0
+ 214 0016 0014     		asrs	r0, r0, #16
+ 215 0018 0638     		subs	r0, r0, #6
+ 216 001a 80B2     		uxth	r0, r0
+ 217              	.LVL19:
+  56:SD_I2C.c      ****     return humidity;
+  57:SD_I2C.c      **** }
+ 218              		.loc 1 57 0
+ 219              		@ sp needed
+ 220 001c 10BD     		pop	{r4, pc}
+ 221              		.cfi_endproc
+ 222              	.LFE38:
+ 223              		.size	humidity_read, .-humidity_read
+ 224 001e C046     		.section	.text.temperature_local_read,"ax",%progbits
+ 225              		.align	2
+ 226              		.global	temperature_local_read
+ 227              		.code	16
+ 228              		.thumb_func
+ARM GAS  C:\Users\sergio\AppData\Local\Temp\ccXoQ2wk.s 			page 6
+
+
+ 229              		.type	temperature_local_read, %function
+ 230              	temperature_local_read:
+ 231              	.LFB39:
+  58:SD_I2C.c      **** 
+  59:SD_I2C.c      **** uint8 temperature_local_read(uint32 address, uint8 reg){
+ 232              		.loc 1 59 0
+ 233              		.cfi_startproc
+ 234              		@ args = 0, pretend = 0, frame = 0
+ 235              		@ frame_needed = 0, uses_anonymous_args = 0
+ 236              	.LVL20:
+ 237 0000 10B5     		push	{r4, lr}
+ 238              		.cfi_def_cfa_offset 8
+ 239              		.cfi_offset 4, -8
+ 240              		.cfi_offset 14, -4
+ 241              	.LVL21:
+  60:SD_I2C.c      ****   uint8 temperature = 0;
+  61:SD_I2C.c      ****     temperature = Read_sensor_byte(address, reg);
+ 242              		.loc 1 61 0
+ 243 0002 FFF7FEFF 		bl	Read_sensor_byte
+ 244              	.LVL22:
+  62:SD_I2C.c      ****     
+  63:SD_I2C.c      ****     
+  64:SD_I2C.c      ****     return 0;
+  65:SD_I2C.c      **** }
+ 245              		.loc 1 65 0
+ 246 0006 0020     		movs	r0, #0
+ 247              		@ sp needed
+ 248 0008 10BD     		pop	{r4, pc}
+ 249              		.cfi_endproc
+ 250              	.LFE39:
+ 251              		.size	temperature_local_read, .-temperature_local_read
+ 252 000a C046     		.section	.text.temperature_remote_read,"ax",%progbits
+ 253              		.align	2
+ 254              		.global	temperature_remote_read
+ 255              		.code	16
+ 256              		.thumb_func
+ 257              		.type	temperature_remote_read, %function
+ 258              	temperature_remote_read:
+ 259              	.LFB40:
+  66:SD_I2C.c      **** 
+  67:SD_I2C.c      **** uint8 temperature_remote_read(uint32 address, uint8 reg){
+ 260              		.loc 1 67 0
+ 261              		.cfi_startproc
+ 262              		@ args = 0, pretend = 0, frame = 0
+ 263              		@ frame_needed = 0, uses_anonymous_args = 0
+ 264              	.LVL23:
+ 265 0000 10B5     		push	{r4, lr}
+ 266              		.cfi_def_cfa_offset 8
+ 267              		.cfi_offset 4, -8
+ 268              		.cfi_offset 14, -4
+ 269              	.LVL24:
+  68:SD_I2C.c      **** uint8 temperature = 0;
+  69:SD_I2C.c      ****     temperature = Read_sensor_byte(address, reg);
+ 270              		.loc 1 69 0
+ 271 0002 FFF7FEFF 		bl	Read_sensor_byte
+ 272              	.LVL25:
+  70:SD_I2C.c      ****     
+ARM GAS  C:\Users\sergio\AppData\Local\Temp\ccXoQ2wk.s 			page 7
+
+
+  71:SD_I2C.c      ****     return 0;
+  72:SD_I2C.c      **** }
+ 273              		.loc 1 72 0
+ 274 0006 0020     		movs	r0, #0
+ 275              		@ sp needed
+ 276 0008 10BD     		pop	{r4, pc}
+ 277              		.cfi_endproc
+ 278              	.LFE40:
+ 279              		.size	temperature_remote_read, .-temperature_remote_read
+ 280              		.global	__aeabi_i2f
+ 281              		.global	__aeabi_fdiv
+ 282 000a C046     		.section	.text.current_read,"ax",%progbits
+ 283              		.align	2
+ 284              		.global	current_read
+ 285              		.code	16
+ 286              		.thumb_func
+ 287              		.type	current_read, %function
+ 288              	current_read:
+ 289              	.LFB41:
+  73:SD_I2C.c      **** 
+  74:SD_I2C.c      **** float current_read(uint32 address, uint8 reg){
+ 290              		.loc 1 74 0
+ 291              		.cfi_startproc
+ 292              		@ args = 0, pretend = 0, frame = 8
+ 293              		@ frame_needed = 0, uses_anonymous_args = 0
+ 294              	.LVL26:
+ 295 0000 10B5     		push	{r4, lr}
+ 296              		.cfi_def_cfa_offset 8
+ 297              		.cfi_offset 4, -8
+ 298              		.cfi_offset 14, -4
+ 299 0002 82B0     		sub	sp, sp, #8
+ 300              		.cfi_def_cfa_offset 16
+ 301 0004 0400     		movs	r4, r0
+ 302 0006 0B00     		movs	r3, r1
+  75:SD_I2C.c      ****     uint8 write_buff[1] ={0};
+ 303              		.loc 1 75 0
+ 304 0008 01A9     		add	r1, sp, #4
+ 305              	.LVL27:
+  76:SD_I2C.c      ****     write_buff[0] = reg;
+ 306              		.loc 1 76 0
+ 307 000a 0B70     		strb	r3, [r1]
+  77:SD_I2C.c      ****     
+  78:SD_I2C.c      ****   volatile  uint8 read_buff[4] = {0,0,0,0};
+ 308              		.loc 1 78 0
+ 309 000c 0023     		movs	r3, #0
+ 310 000e 0093     		str	r3, [sp]
+  79:SD_I2C.c      ****     
+  80:SD_I2C.c      ****     I2C_1_I2CMasterWriteBuf(address, (uint8 *) write_buff, 1, I2C_1_I2C_MODE_NO_STOP);
+ 311              		.loc 1 80 0
+ 312 0010 0233     		adds	r3, r3, #2
+ 313 0012 0122     		movs	r2, #1
+ 314 0014 FFF7FEFF 		bl	I2C_1_I2CMasterWriteBuf
+ 315              	.LVL28:
+ 316              	.L12:
+  81:SD_I2C.c      ****     while((I2C_1_I2CMasterStatus() & I2C_1_I2C_MSTAT_WR_CMPLT) == 0){}
+ 317              		.loc 1 81 0 discriminator 1
+ 318 0018 FFF7FEFF 		bl	I2C_1_I2CMasterStatus
+ARM GAS  C:\Users\sergio\AppData\Local\Temp\ccXoQ2wk.s 			page 8
+
+
+ 319              	.LVL29:
+ 320 001c 8307     		lsls	r3, r0, #30
+ 321 001e FBD5     		bpl	.L12
+  82:SD_I2C.c      ****     
+  83:SD_I2C.c      ****      I2C_1_I2CMasterReadBuf(address, (uint8 *) read_buff, 4, I2C_1_I2C_MODE_REPEAT_START);
+ 322              		.loc 1 83 0
+ 323 0020 0123     		movs	r3, #1
+ 324 0022 0422     		movs	r2, #4
+ 325 0024 6946     		mov	r1, sp
+ 326 0026 2000     		movs	r0, r4
+ 327 0028 FFF7FEFF 		bl	I2C_1_I2CMasterReadBuf
+ 328              	.LVL30:
+ 329              	.L13:
+  84:SD_I2C.c      ****     while((I2C_1_I2CMasterStatus() & I2C_1_I2C_MSTAT_RD_CMPLT) == 0){}
+ 330              		.loc 1 84 0 discriminator 1
+ 331 002c FFF7FEFF 		bl	I2C_1_I2CMasterStatus
+ 332              	.LVL31:
+ 333 0030 C307     		lsls	r3, r0, #31
+ 334 0032 FBD5     		bpl	.L13
+  85:SD_I2C.c      ****     
+  86:SD_I2C.c      ****     int tempCurrent = (read_buff[0] << 24 | read_buff[1] << 16 | read_buff[2] << 8 | read_buff[3]);
+ 335              		.loc 1 86 0
+ 336 0034 6B46     		mov	r3, sp
+ 337 0036 1878     		ldrb	r0, [r3]
+ 338 0038 0006     		lsls	r0, r0, #24
+ 339 003a 5B78     		ldrb	r3, [r3, #1]
+ 340 003c 1B04     		lsls	r3, r3, #16
+ 341 003e 1843     		orrs	r0, r3
+ 342 0040 6B46     		mov	r3, sp
+ 343 0042 9B78     		ldrb	r3, [r3, #2]
+ 344 0044 1B02     		lsls	r3, r3, #8
+ 345 0046 1843     		orrs	r0, r3
+ 346 0048 6B46     		mov	r3, sp
+ 347 004a DB78     		ldrb	r3, [r3, #3]
+ 348 004c 1843     		orrs	r0, r3
+ 349              	.LVL32:
+  87:SD_I2C.c      ****     float formattedCurrent = tempCurrent/10000.f;
+ 350              		.loc 1 87 0
+ 351 004e FFF7FEFF 		bl	__aeabi_i2f
+ 352              	.LVL33:
+ 353 0052 0249     		ldr	r1, .L14
+ 354 0054 FFF7FEFF 		bl	__aeabi_fdiv
+ 355              	.LVL34:
+  88:SD_I2C.c      ****  
+  89:SD_I2C.c      ****     return formattedCurrent;
+  90:SD_I2C.c      **** }
+ 356              		.loc 1 90 0
+ 357 0058 02B0     		add	sp, sp, #8
+ 358              		@ sp needed
+ 359              	.LVL35:
+ 360 005a 10BD     		pop	{r4, pc}
+ 361              	.L15:
+ 362              		.align	2
+ 363              	.L14:
+ 364 005c 00401C46 		.word	1176256512
+ 365              		.cfi_endproc
+ 366              	.LFE41:
+ARM GAS  C:\Users\sergio\AppData\Local\Temp\ccXoQ2wk.s 			page 9
+
+
+ 367              		.size	current_read, .-current_read
+ 368              		.section	.text.voltage_read,"ax",%progbits
+ 369              		.align	2
+ 370              		.global	voltage_read
+ 371              		.code	16
+ 372              		.thumb_func
+ 373              		.type	voltage_read, %function
+ 374              	voltage_read:
+ 375              	.LFB42:
+  91:SD_I2C.c      **** 
+  92:SD_I2C.c      **** float voltage_read(uint32 address, uint8 reg){
+ 376              		.loc 1 92 0
+ 377              		.cfi_startproc
+ 378              		@ args = 0, pretend = 0, frame = 0
+ 379              		@ frame_needed = 0, uses_anonymous_args = 0
+ 380              	.LVL36:
+ 381 0000 10B5     		push	{r4, lr}
+ 382              		.cfi_def_cfa_offset 8
+ 383              		.cfi_offset 4, -8
+ 384              		.cfi_offset 14, -4
+  93:SD_I2C.c      ****     
+  94:SD_I2C.c      ****     uint16 tempVolt = Read_sensor_word(address, reg);
+ 385              		.loc 1 94 0
+ 386 0002 FFF7FEFF 		bl	Read_sensor_word
+ 387              	.LVL37:
+  95:SD_I2C.c      ****     float formattedVolt = tempVolt/10.0f;
+ 388              		.loc 1 95 0
+ 389 0006 FFF7FEFF 		bl	__aeabi_i2f
+ 390              	.LVL38:
+ 391 000a 0249     		ldr	r1, .L17
+ 392 000c FFF7FEFF 		bl	__aeabi_fdiv
+ 393              	.LVL39:
+  96:SD_I2C.c      ****     return formattedVolt;
+  97:SD_I2C.c      **** }
+ 394              		.loc 1 97 0
+ 395              		@ sp needed
+ 396 0010 10BD     		pop	{r4, pc}
+ 397              	.L18:
+ 398 0012 C046     		.align	2
+ 399              	.L17:
+ 400 0014 00002041 		.word	1092616192
+ 401              		.cfi_endproc
+ 402              	.LFE42:
+ 403              		.size	voltage_read, .-voltage_read
+ 404              		.section	.text.line_frequency_read,"ax",%progbits
+ 405              		.align	2
+ 406              		.global	line_frequency_read
+ 407              		.code	16
+ 408              		.thumb_func
+ 409              		.type	line_frequency_read, %function
+ 410              	line_frequency_read:
+ 411              	.LFB43:
+  98:SD_I2C.c      **** 
+  99:SD_I2C.c      **** float line_frequency_read(uint32 address, uint8 reg){
+ 412              		.loc 1 99 0
+ 413              		.cfi_startproc
+ 414              		@ args = 0, pretend = 0, frame = 0
+ARM GAS  C:\Users\sergio\AppData\Local\Temp\ccXoQ2wk.s 			page 10
+
+
+ 415              		@ frame_needed = 0, uses_anonymous_args = 0
+ 416              	.LVL40:
+ 417 0000 10B5     		push	{r4, lr}
+ 418              		.cfi_def_cfa_offset 8
+ 419              		.cfi_offset 4, -8
+ 420              		.cfi_offset 14, -4
+ 100:SD_I2C.c      ****     
+ 101:SD_I2C.c      ****     uint16 temLFreq = Read_sensor_word(address, reg);
+ 421              		.loc 1 101 0
+ 422 0002 FFF7FEFF 		bl	Read_sensor_word
+ 423              	.LVL41:
+ 102:SD_I2C.c      ****     float formattedLineFrequency = temLFreq/1000.0f;
+ 424              		.loc 1 102 0
+ 425 0006 FFF7FEFF 		bl	__aeabi_i2f
+ 426              	.LVL42:
+ 427 000a 0249     		ldr	r1, .L20
+ 428 000c FFF7FEFF 		bl	__aeabi_fdiv
+ 429              	.LVL43:
+ 103:SD_I2C.c      ****     return formattedLineFrequency;
+ 104:SD_I2C.c      **** }
+ 430              		.loc 1 104 0
+ 431              		@ sp needed
+ 432 0010 10BD     		pop	{r4, pc}
+ 433              	.L21:
+ 434 0012 C046     		.align	2
+ 435              	.L20:
+ 436 0014 00007A44 		.word	1148846080
+ 437              		.cfi_endproc
+ 438              	.LFE43:
+ 439              		.size	line_frequency_read, .-line_frequency_read
+ 440              		.section	.text.x_accelerometer_read,"ax",%progbits
+ 441              		.align	2
+ 442              		.global	x_accelerometer_read
+ 443              		.code	16
+ 444              		.thumb_func
+ 445              		.type	x_accelerometer_read, %function
+ 446              	x_accelerometer_read:
+ 447              	.LFB44:
+ 105:SD_I2C.c      **** 
+ 106:SD_I2C.c      **** uint16 x_accelerometer_read(uint32 address, uint8 regLSB, uint8 regMSB){
+ 448              		.loc 1 106 0
+ 449              		.cfi_startproc
+ 450              		@ args = 0, pretend = 0, frame = 0
+ 451              		@ frame_needed = 0, uses_anonymous_args = 0
+ 452              	.LVL44:
+ 453 0000 70B5     		push	{r4, r5, r6, lr}
+ 454              		.cfi_def_cfa_offset 16
+ 455              		.cfi_offset 4, -16
+ 456              		.cfi_offset 5, -12
+ 457              		.cfi_offset 6, -8
+ 458              		.cfi_offset 14, -4
+ 459 0002 0500     		movs	r5, r0
+ 460 0004 1600     		movs	r6, r2
+ 107:SD_I2C.c      ****     uint8 lsb = Read_sensor_byte(address, regLSB);
+ 461              		.loc 1 107 0
+ 462 0006 FFF7FEFF 		bl	Read_sensor_byte
+ 463              	.LVL45:
+ARM GAS  C:\Users\sergio\AppData\Local\Temp\ccXoQ2wk.s 			page 11
+
+
+ 464 000a 0400     		movs	r4, r0
+ 465              	.LVL46:
+ 108:SD_I2C.c      ****     uint8 msb = Read_sensor_byte(address, regMSB);
+ 466              		.loc 1 108 0
+ 467 000c 3100     		movs	r1, r6
+ 468 000e 2800     		movs	r0, r5
+ 469 0010 FFF7FEFF 		bl	Read_sensor_byte
+ 470              	.LVL47:
+ 109:SD_I2C.c      ****     
+ 110:SD_I2C.c      ****     uint16 x = (msb << 8) | (lsb & 0xf0);
+ 471              		.loc 1 110 0
+ 472 0014 0002     		lsls	r0, r0, #8
+ 473              	.LVL48:
+ 474 0016 0F23     		movs	r3, #15
+ 475 0018 9C43     		bics	r4, r3
+ 476              	.LVL49:
+ 477 001a E4B2     		uxtb	r4, r4
+ 478 001c 2043     		orrs	r0, r4
+ 479 001e 80B2     		uxth	r0, r0
+ 480              	.LVL50:
+ 111:SD_I2C.c      ****     x = x >> 4;
+ 481              		.loc 1 111 0
+ 482 0020 0009     		lsrs	r0, r0, #4
+ 483              	.LVL51:
+ 112:SD_I2C.c      ****     
+ 113:SD_I2C.c      ****     return x;
+ 114:SD_I2C.c      **** }
+ 484              		.loc 1 114 0
+ 485              		@ sp needed
+ 486              	.LVL52:
+ 487 0022 70BD     		pop	{r4, r5, r6, pc}
+ 488              		.cfi_endproc
+ 489              	.LFE44:
+ 490              		.size	x_accelerometer_read, .-x_accelerometer_read
+ 491              		.section	.text.y_accelerometer_read,"ax",%progbits
+ 492              		.align	2
+ 493              		.global	y_accelerometer_read
+ 494              		.code	16
+ 495              		.thumb_func
+ 496              		.type	y_accelerometer_read, %function
+ 497              	y_accelerometer_read:
+ 498              	.LFB45:
+ 115:SD_I2C.c      **** 
+ 116:SD_I2C.c      **** uint16 y_accelerometer_read(uint32 address, uint8 regLSB, uint8 regMSB){
+ 499              		.loc 1 116 0
+ 500              		.cfi_startproc
+ 501              		@ args = 0, pretend = 0, frame = 0
+ 502              		@ frame_needed = 0, uses_anonymous_args = 0
+ 503              	.LVL53:
+ 504 0000 70B5     		push	{r4, r5, r6, lr}
+ 505              		.cfi_def_cfa_offset 16
+ 506              		.cfi_offset 4, -16
+ 507              		.cfi_offset 5, -12
+ 508              		.cfi_offset 6, -8
+ 509              		.cfi_offset 14, -4
+ 510 0002 0500     		movs	r5, r0
+ 511 0004 1600     		movs	r6, r2
+ARM GAS  C:\Users\sergio\AppData\Local\Temp\ccXoQ2wk.s 			page 12
+
+
+ 117:SD_I2C.c      ****     uint8 lsb = Read_sensor_byte(address, regLSB);
+ 512              		.loc 1 117 0
+ 513 0006 FFF7FEFF 		bl	Read_sensor_byte
+ 514              	.LVL54:
+ 515 000a 0400     		movs	r4, r0
+ 516              	.LVL55:
+ 118:SD_I2C.c      ****     uint8 msb = Read_sensor_byte(address, regMSB);
+ 517              		.loc 1 118 0
+ 518 000c 3100     		movs	r1, r6
+ 519 000e 2800     		movs	r0, r5
+ 520 0010 FFF7FEFF 		bl	Read_sensor_byte
+ 521              	.LVL56:
+ 119:SD_I2C.c      ****     
+ 120:SD_I2C.c      ****     uint16 y = msb << 8 | (lsb & 0xf0);
+ 522              		.loc 1 120 0
+ 523 0014 0002     		lsls	r0, r0, #8
+ 524              	.LVL57:
+ 525 0016 0F23     		movs	r3, #15
+ 526 0018 9C43     		bics	r4, r3
+ 527              	.LVL58:
+ 528 001a E4B2     		uxtb	r4, r4
+ 529 001c 2043     		orrs	r0, r4
+ 530 001e 80B2     		uxth	r0, r0
+ 531              	.LVL59:
+ 121:SD_I2C.c      ****     y = y >> 4;
+ 532              		.loc 1 121 0
+ 533 0020 0009     		lsrs	r0, r0, #4
+ 534              	.LVL60:
+ 122:SD_I2C.c      ****     
+ 123:SD_I2C.c      ****     return y;
+ 124:SD_I2C.c      **** }
+ 535              		.loc 1 124 0
+ 536              		@ sp needed
+ 537              	.LVL61:
+ 538 0022 70BD     		pop	{r4, r5, r6, pc}
+ 539              		.cfi_endproc
+ 540              	.LFE45:
+ 541              		.size	y_accelerometer_read, .-y_accelerometer_read
+ 542              		.section	.text.z_accelerometer_read,"ax",%progbits
+ 543              		.align	2
+ 544              		.global	z_accelerometer_read
+ 545              		.code	16
+ 546              		.thumb_func
+ 547              		.type	z_accelerometer_read, %function
+ 548              	z_accelerometer_read:
+ 549              	.LFB46:
+ 125:SD_I2C.c      **** 
+ 126:SD_I2C.c      **** uint16 z_accelerometer_read(uint32 address, uint8 regLSB, uint8 regMSB){
+ 550              		.loc 1 126 0
+ 551              		.cfi_startproc
+ 552              		@ args = 0, pretend = 0, frame = 0
+ 553              		@ frame_needed = 0, uses_anonymous_args = 0
+ 554              	.LVL62:
+ 555 0000 70B5     		push	{r4, r5, r6, lr}
+ 556              		.cfi_def_cfa_offset 16
+ 557              		.cfi_offset 4, -16
+ 558              		.cfi_offset 5, -12
+ARM GAS  C:\Users\sergio\AppData\Local\Temp\ccXoQ2wk.s 			page 13
+
+
+ 559              		.cfi_offset 6, -8
+ 560              		.cfi_offset 14, -4
+ 561 0002 0500     		movs	r5, r0
+ 562 0004 1600     		movs	r6, r2
+ 127:SD_I2C.c      ****     uint8 lsb = Read_sensor_byte(address, regLSB);
+ 563              		.loc 1 127 0
+ 564 0006 FFF7FEFF 		bl	Read_sensor_byte
+ 565              	.LVL63:
+ 566 000a 0400     		movs	r4, r0
+ 567              	.LVL64:
+ 128:SD_I2C.c      ****     uint8 msb = Read_sensor_byte(address, regMSB);
+ 568              		.loc 1 128 0
+ 569 000c 3100     		movs	r1, r6
+ 570 000e 2800     		movs	r0, r5
+ 571 0010 FFF7FEFF 		bl	Read_sensor_byte
+ 572              	.LVL65:
+ 129:SD_I2C.c      ****     
+ 130:SD_I2C.c      ****     uint16 z = msb << 8 | (lsb & 0xf0);
+ 573              		.loc 1 130 0
+ 574 0014 0002     		lsls	r0, r0, #8
+ 575              	.LVL66:
+ 576 0016 0F23     		movs	r3, #15
+ 577 0018 9C43     		bics	r4, r3
+ 578              	.LVL67:
+ 579 001a E4B2     		uxtb	r4, r4
+ 580 001c 2043     		orrs	r0, r4
+ 581 001e 80B2     		uxth	r0, r0
+ 582              	.LVL68:
+ 131:SD_I2C.c      ****     z = z >> 4;
+ 583              		.loc 1 131 0
+ 584 0020 0009     		lsrs	r0, r0, #4
+ 585              	.LVL69:
+ 132:SD_I2C.c      ****     
+ 133:SD_I2C.c      ****     return z;
+ 134:SD_I2C.c      **** }
+ 586              		.loc 1 134 0
+ 587              		@ sp needed
+ 588              	.LVL70:
+ 589 0022 70BD     		pop	{r4, r5, r6, pc}
+ 590              		.cfi_endproc
+ 591              	.LFE46:
+ 592              		.size	z_accelerometer_read, .-z_accelerometer_read
+ 593              		.section	.text.gpio_expander_read,"ax",%progbits
+ 594              		.align	2
+ 595              		.global	gpio_expander_read
+ 596              		.code	16
+ 597              		.thumb_func
+ 598              		.type	gpio_expander_read, %function
+ 599              	gpio_expander_read:
+ 600              	.LFB47:
+ 135:SD_I2C.c      **** 
+ 136:SD_I2C.c      **** uint16 gpio_expander_read(uint32 address, uint8 reg){
+ 601              		.loc 1 136 0
+ 602              		.cfi_startproc
+ 603              		@ args = 0, pretend = 0, frame = 0
+ 604              		@ frame_needed = 0, uses_anonymous_args = 0
+ 605              	.LVL71:
+ARM GAS  C:\Users\sergio\AppData\Local\Temp\ccXoQ2wk.s 			page 14
+
+
+ 606 0000 10B5     		push	{r4, lr}
+ 607              		.cfi_def_cfa_offset 8
+ 608              		.cfi_offset 4, -8
+ 609              		.cfi_offset 14, -4
+ 137:SD_I2C.c      ****     // i think to read a expecific pin i have to pass the 
+ 138:SD_I2C.c      ****     uint16 read = Read_sensor_byte(address, reg);
+ 610              		.loc 1 138 0
+ 611 0002 FFF7FEFF 		bl	Read_sensor_byte
+ 612              	.LVL72:
+ 139:SD_I2C.c      ****     return 0;
+ 140:SD_I2C.c      **** }
+ 613              		.loc 1 140 0
+ 614 0006 0020     		movs	r0, #0
+ 615              		@ sp needed
+ 616 0008 10BD     		pop	{r4, pc}
+ 617              		.cfi_endproc
+ 618              	.LFE47:
+ 619              		.size	gpio_expander_read, .-gpio_expander_read
+ 620 000a C046     		.text
+ 621              	.Letext0:
+ 622              		.file 2 "Generated_Source\\PSoC4/cytypes.h"
+ 623              		.file 3 "Generated_Source\\PSoC4/I2C_1_I2C.h"
+ 624              		.section	.debug_info,"",%progbits
+ 625              	.Ldebug_info0:
+ 626 0000 7A070000 		.4byte	0x77a
+ 627 0004 0400     		.2byte	0x4
+ 628 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 629 000a 04       		.byte	0x4
+ 630 000b 01       		.uleb128 0x1
+ 631 000c C3010000 		.4byte	.LASF46
+ 632 0010 0C       		.byte	0xc
+ 633 0011 BA010000 		.4byte	.LASF47
+ 634 0015 C3020000 		.4byte	.LASF48
+ 635 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ 636 001d 00000000 		.4byte	0
+ 637 0021 00000000 		.4byte	.Ldebug_line0
+ 638 0025 02       		.uleb128 0x2
+ 639 0026 01       		.byte	0x1
+ 640 0027 06       		.byte	0x6
+ 641 0028 27030000 		.4byte	.LASF0
+ 642 002c 02       		.uleb128 0x2
+ 643 002d 01       		.byte	0x1
+ 644 002e 08       		.byte	0x8
+ 645 002f A4000000 		.4byte	.LASF1
+ 646 0033 02       		.uleb128 0x2
+ 647 0034 02       		.byte	0x2
+ 648 0035 05       		.byte	0x5
+ 649 0036 A1020000 		.4byte	.LASF2
+ 650 003a 02       		.uleb128 0x2
+ 651 003b 02       		.byte	0x2
+ 652 003c 07       		.byte	0x7
+ 653 003d 33000000 		.4byte	.LASF3
+ 654 0041 02       		.uleb128 0x2
+ 655 0042 04       		.byte	0x4
+ 656 0043 05       		.byte	0x5
+ 657 0044 20000000 		.4byte	.LASF4
+ 658 0048 02       		.uleb128 0x2
+ARM GAS  C:\Users\sergio\AppData\Local\Temp\ccXoQ2wk.s 			page 15
+
+
+ 659 0049 04       		.byte	0x4
+ 660 004a 07       		.byte	0x7
+ 661 004b C7000000 		.4byte	.LASF5
+ 662 004f 02       		.uleb128 0x2
+ 663 0050 08       		.byte	0x8
+ 664 0051 05       		.byte	0x5
+ 665 0052 7C020000 		.4byte	.LASF6
+ 666 0056 02       		.uleb128 0x2
+ 667 0057 08       		.byte	0x8
+ 668 0058 07       		.byte	0x7
+ 669 0059 7A000000 		.4byte	.LASF7
+ 670 005d 03       		.uleb128 0x3
+ 671 005e 04       		.byte	0x4
+ 672 005f 05       		.byte	0x5
+ 673 0060 696E7400 		.ascii	"int\000"
+ 674 0064 02       		.uleb128 0x2
+ 675 0065 04       		.byte	0x4
+ 676 0066 07       		.byte	0x7
+ 677 0067 69010000 		.4byte	.LASF8
+ 678 006b 04       		.uleb128 0x4
+ 679 006c D9000000 		.4byte	.LASF9
+ 680 0070 02       		.byte	0x2
+ 681 0071 E401     		.2byte	0x1e4
+ 682 0073 2C000000 		.4byte	0x2c
+ 683 0077 04       		.uleb128 0x4
+ 684 0078 3F010000 		.4byte	.LASF10
+ 685 007c 02       		.byte	0x2
+ 686 007d E501     		.2byte	0x1e5
+ 687 007f 3A000000 		.4byte	0x3a
+ 688 0083 04       		.uleb128 0x4
+ 689 0084 62010000 		.4byte	.LASF11
+ 690 0088 02       		.byte	0x2
+ 691 0089 E601     		.2byte	0x1e6
+ 692 008b 48000000 		.4byte	0x48
+ 693 008f 02       		.uleb128 0x2
+ 694 0090 04       		.byte	0x4
+ 695 0091 04       		.byte	0x4
+ 696 0092 74000000 		.4byte	.LASF12
+ 697 0096 02       		.uleb128 0x2
+ 698 0097 08       		.byte	0x8
+ 699 0098 04       		.byte	0x4
+ 700 0099 38010000 		.4byte	.LASF13
+ 701 009d 02       		.uleb128 0x2
+ 702 009e 01       		.byte	0x1
+ 703 009f 08       		.byte	0x8
+ 704 00a0 89010000 		.4byte	.LASF14
+ 705 00a4 05       		.uleb128 0x5
+ 706 00a5 6B000000 		.4byte	0x6b
+ 707 00a9 02       		.uleb128 0x2
+ 708 00aa 08       		.byte	0x8
+ 709 00ab 04       		.byte	0x4
+ 710 00ac 1B030000 		.4byte	.LASF15
+ 711 00b0 02       		.uleb128 0x2
+ 712 00b1 04       		.byte	0x4
+ 713 00b2 07       		.byte	0x7
+ 714 00b3 73020000 		.4byte	.LASF16
+ 715 00b7 06       		.uleb128 0x6
+ARM GAS  C:\Users\sergio\AppData\Local\Temp\ccXoQ2wk.s 			page 16
+
+
+ 716 00b8 A9010000 		.4byte	.LASF20
+ 717 00bc 01       		.byte	0x1
+ 718 00bd 10       		.byte	0x10
+ 719 00be 77000000 		.4byte	0x77
+ 720 00c2 00000000 		.4byte	.LFB35
+ 721 00c6 46000000 		.4byte	.LFE35-.LFB35
+ 722 00ca 01       		.uleb128 0x1
+ 723 00cb 9C       		.byte	0x9c
+ 724 00cc 65010000 		.4byte	0x165
+ 725 00d0 07       		.uleb128 0x7
+ 726 00d1 81010000 		.4byte	.LASF17
+ 727 00d5 01       		.byte	0x1
+ 728 00d6 10       		.byte	0x10
+ 729 00d7 83000000 		.4byte	0x83
+ 730 00db 00000000 		.4byte	.LLST0
+ 731 00df 08       		.uleb128 0x8
+ 732 00e0 72656700 		.ascii	"reg\000"
+ 733 00e4 01       		.byte	0x1
+ 734 00e5 10       		.byte	0x10
+ 735 00e6 6B000000 		.4byte	0x6b
+ 736 00ea 2C000000 		.4byte	.LLST1
+ 737 00ee 09       		.uleb128 0x9
+ 738 00ef 76010000 		.4byte	.LASF18
+ 739 00f3 01       		.byte	0x1
+ 740 00f4 12       		.byte	0x12
+ 741 00f5 65010000 		.4byte	0x165
+ 742 00f9 02       		.uleb128 0x2
+ 743 00fa 91       		.byte	0x91
+ 744 00fb 74       		.sleb128 -12
+ 745 00fc 09       		.uleb128 0x9
+ 746 00fd 29000000 		.4byte	.LASF19
+ 747 0101 01       		.byte	0x1
+ 748 0102 15       		.byte	0x15
+ 749 0103 85010000 		.4byte	0x185
+ 750 0107 02       		.uleb128 0x2
+ 751 0108 91       		.byte	0x91
+ 752 0109 70       		.sleb128 -16
+ 753 010a 0A       		.uleb128 0xa
+ 754 010b 1C000000 		.4byte	.LVL2
+ 755 010f 59070000 		.4byte	0x759
+ 756 0113 2E010000 		.4byte	0x12e
+ 757 0117 0B       		.uleb128 0xb
+ 758 0118 01       		.uleb128 0x1
+ 759 0119 50       		.byte	0x50
+ 760 011a 02       		.uleb128 0x2
+ 761 011b 74       		.byte	0x74
+ 762 011c 00       		.sleb128 0
+ 763 011d 0B       		.uleb128 0xb
+ 764 011e 01       		.uleb128 0x1
+ 765 011f 51       		.byte	0x51
+ 766 0120 02       		.uleb128 0x2
+ 767 0121 91       		.byte	0x91
+ 768 0122 74       		.sleb128 -12
+ 769 0123 0B       		.uleb128 0xb
+ 770 0124 01       		.uleb128 0x1
+ 771 0125 52       		.byte	0x52
+ 772 0126 01       		.uleb128 0x1
+ARM GAS  C:\Users\sergio\AppData\Local\Temp\ccXoQ2wk.s 			page 17
+
+
+ 773 0127 31       		.byte	0x31
+ 774 0128 0B       		.uleb128 0xb
+ 775 0129 01       		.uleb128 0x1
+ 776 012a 53       		.byte	0x53
+ 777 012b 01       		.uleb128 0x1
+ 778 012c 32       		.byte	0x32
+ 779 012d 00       		.byte	0
+ 780 012e 0C       		.uleb128 0xc
+ 781 012f 20000000 		.4byte	.LVL3
+ 782 0133 65070000 		.4byte	0x765
+ 783 0137 0A       		.uleb128 0xa
+ 784 0138 30000000 		.4byte	.LVL4
+ 785 013c 71070000 		.4byte	0x771
+ 786 0140 5B010000 		.4byte	0x15b
+ 787 0144 0B       		.uleb128 0xb
+ 788 0145 01       		.uleb128 0x1
+ 789 0146 50       		.byte	0x50
+ 790 0147 02       		.uleb128 0x2
+ 791 0148 74       		.byte	0x74
+ 792 0149 00       		.sleb128 0
+ 793 014a 0B       		.uleb128 0xb
+ 794 014b 01       		.uleb128 0x1
+ 795 014c 51       		.byte	0x51
+ 796 014d 02       		.uleb128 0x2
+ 797 014e 7D       		.byte	0x7d
+ 798 014f 00       		.sleb128 0
+ 799 0150 0B       		.uleb128 0xb
+ 800 0151 01       		.uleb128 0x1
+ 801 0152 52       		.byte	0x52
+ 802 0153 01       		.uleb128 0x1
+ 803 0154 32       		.byte	0x32
+ 804 0155 0B       		.uleb128 0xb
+ 805 0156 01       		.uleb128 0x1
+ 806 0157 53       		.byte	0x53
+ 807 0158 01       		.uleb128 0x1
+ 808 0159 31       		.byte	0x31
+ 809 015a 00       		.byte	0
+ 810 015b 0C       		.uleb128 0xc
+ 811 015c 34000000 		.4byte	.LVL5
+ 812 0160 65070000 		.4byte	0x765
+ 813 0164 00       		.byte	0
+ 814 0165 0D       		.uleb128 0xd
+ 815 0166 6B000000 		.4byte	0x6b
+ 816 016a 75010000 		.4byte	0x175
+ 817 016e 0E       		.uleb128 0xe
+ 818 016f B0000000 		.4byte	0xb0
+ 819 0173 00       		.byte	0
+ 820 0174 00       		.byte	0
+ 821 0175 0D       		.uleb128 0xd
+ 822 0176 A4000000 		.4byte	0xa4
+ 823 017a 85010000 		.4byte	0x185
+ 824 017e 0E       		.uleb128 0xe
+ 825 017f B0000000 		.4byte	0xb0
+ 826 0183 01       		.byte	0x1
+ 827 0184 00       		.byte	0
+ 828 0185 05       		.uleb128 0x5
+ 829 0186 75010000 		.4byte	0x175
+ARM GAS  C:\Users\sergio\AppData\Local\Temp\ccXoQ2wk.s 			page 18
+
+
+ 830 018a 06       		.uleb128 0x6
+ 831 018b 51020000 		.4byte	.LASF21
+ 832 018f 01       		.byte	0x1
+ 833 0190 20       		.byte	0x20
+ 834 0191 6B000000 		.4byte	0x6b
+ 835 0195 00000000 		.4byte	.LFB36
+ 836 0199 42000000 		.4byte	.LFE36-.LFB36
+ 837 019d 01       		.uleb128 0x1
+ 838 019e 9C       		.byte	0x9c
+ 839 019f 38020000 		.4byte	0x238
+ 840 01a3 07       		.uleb128 0x7
+ 841 01a4 81010000 		.4byte	.LASF17
+ 842 01a8 01       		.byte	0x1
+ 843 01a9 20       		.byte	0x20
+ 844 01aa 83000000 		.4byte	0x83
+ 845 01ae 4D000000 		.4byte	.LLST2
+ 846 01b2 08       		.uleb128 0x8
+ 847 01b3 72656700 		.ascii	"reg\000"
+ 848 01b7 01       		.byte	0x1
+ 849 01b8 20       		.byte	0x20
+ 850 01b9 6B000000 		.4byte	0x6b
+ 851 01bd 79000000 		.4byte	.LLST3
+ 852 01c1 09       		.uleb128 0x9
+ 853 01c2 76010000 		.4byte	.LASF18
+ 854 01c6 01       		.byte	0x1
+ 855 01c7 22       		.byte	0x22
+ 856 01c8 65010000 		.4byte	0x165
+ 857 01cc 02       		.uleb128 0x2
+ 858 01cd 91       		.byte	0x91
+ 859 01ce 74       		.sleb128 -12
+ 860 01cf 09       		.uleb128 0x9
+ 861 01d0 29000000 		.4byte	.LASF19
+ 862 01d4 01       		.byte	0x1
+ 863 01d5 25       		.byte	0x25
+ 864 01d6 38020000 		.4byte	0x238
+ 865 01da 02       		.uleb128 0x2
+ 866 01db 91       		.byte	0x91
+ 867 01dc 70       		.sleb128 -16
+ 868 01dd 0A       		.uleb128 0xa
+ 869 01de 1C000000 		.4byte	.LVL9
+ 870 01e2 59070000 		.4byte	0x759
+ 871 01e6 01020000 		.4byte	0x201
+ 872 01ea 0B       		.uleb128 0xb
+ 873 01eb 01       		.uleb128 0x1
+ 874 01ec 50       		.byte	0x50
+ 875 01ed 02       		.uleb128 0x2
+ 876 01ee 74       		.byte	0x74
+ 877 01ef 00       		.sleb128 0
+ 878 01f0 0B       		.uleb128 0xb
+ 879 01f1 01       		.uleb128 0x1
+ 880 01f2 51       		.byte	0x51
+ 881 01f3 02       		.uleb128 0x2
+ 882 01f4 91       		.byte	0x91
+ 883 01f5 74       		.sleb128 -12
+ 884 01f6 0B       		.uleb128 0xb
+ 885 01f7 01       		.uleb128 0x1
+ 886 01f8 52       		.byte	0x52
+ARM GAS  C:\Users\sergio\AppData\Local\Temp\ccXoQ2wk.s 			page 19
+
+
+ 887 01f9 01       		.uleb128 0x1
+ 888 01fa 31       		.byte	0x31
+ 889 01fb 0B       		.uleb128 0xb
+ 890 01fc 01       		.uleb128 0x1
+ 891 01fd 53       		.byte	0x53
+ 892 01fe 01       		.uleb128 0x1
+ 893 01ff 32       		.byte	0x32
+ 894 0200 00       		.byte	0
+ 895 0201 0C       		.uleb128 0xc
+ 896 0202 20000000 		.4byte	.LVL10
+ 897 0206 65070000 		.4byte	0x765
+ 898 020a 0A       		.uleb128 0xa
+ 899 020b 30000000 		.4byte	.LVL11
+ 900 020f 71070000 		.4byte	0x771
+ 901 0213 2E020000 		.4byte	0x22e
+ 902 0217 0B       		.uleb128 0xb
+ 903 0218 01       		.uleb128 0x1
+ 904 0219 50       		.byte	0x50
+ 905 021a 02       		.uleb128 0x2
+ 906 021b 74       		.byte	0x74
+ 907 021c 00       		.sleb128 0
+ 908 021d 0B       		.uleb128 0xb
+ 909 021e 01       		.uleb128 0x1
+ 910 021f 51       		.byte	0x51
+ 911 0220 02       		.uleb128 0x2
+ 912 0221 7D       		.byte	0x7d
+ 913 0222 00       		.sleb128 0
+ 914 0223 0B       		.uleb128 0xb
+ 915 0224 01       		.uleb128 0x1
+ 916 0225 52       		.byte	0x52
+ 917 0226 01       		.uleb128 0x1
+ 918 0227 31       		.byte	0x31
+ 919 0228 0B       		.uleb128 0xb
+ 920 0229 01       		.uleb128 0x1
+ 921 022a 53       		.byte	0x53
+ 922 022b 01       		.uleb128 0x1
+ 923 022c 31       		.byte	0x31
+ 924 022d 00       		.byte	0
+ 925 022e 0C       		.uleb128 0xc
+ 926 022f 34000000 		.4byte	.LVL12
+ 927 0233 65070000 		.4byte	0x765
+ 928 0237 00       		.byte	0
+ 929 0238 05       		.uleb128 0x5
+ 930 0239 75010000 		.4byte	0x175
+ 931 023d 06       		.uleb128 0x6
+ 932 023e 46000000 		.4byte	.LASF22
+ 933 0242 01       		.byte	0x1
+ 934 0243 30       		.byte	0x30
+ 935 0244 5D000000 		.4byte	0x5d
+ 936 0248 00000000 		.4byte	.LFB37
+ 937 024c 0E000000 		.4byte	.LFE37-.LFB37
+ 938 0250 01       		.uleb128 0x1
+ 939 0251 9C       		.byte	0x9c
+ 940 0252 86020000 		.4byte	0x286
+ 941 0256 07       		.uleb128 0x7
+ 942 0257 81010000 		.4byte	.LASF17
+ 943 025b 01       		.byte	0x1
+ARM GAS  C:\Users\sergio\AppData\Local\Temp\ccXoQ2wk.s 			page 20
+
+
+ 944 025c 30       		.byte	0x30
+ 945 025d 83000000 		.4byte	0x83
+ 946 0261 9A000000 		.4byte	.LLST4
+ 947 0265 08       		.uleb128 0x8
+ 948 0266 72656700 		.ascii	"reg\000"
+ 949 026a 01       		.byte	0x1
+ 950 026b 30       		.byte	0x30
+ 951 026c 6B000000 		.4byte	0x6b
+ 952 0270 BB000000 		.4byte	.LLST5
+ 953 0274 0F       		.uleb128 0xf
+ 954 0275 06000000 		.4byte	.LVL15
+ 955 0279 8A010000 		.4byte	0x18a
+ 956 027d 0B       		.uleb128 0xb
+ 957 027e 01       		.uleb128 0x1
+ 958 027f 50       		.byte	0x50
+ 959 0280 03       		.uleb128 0x3
+ 960 0281 F3       		.byte	0xf3
+ 961 0282 01       		.uleb128 0x1
+ 962 0283 50       		.byte	0x50
+ 963 0284 00       		.byte	0
+ 964 0285 00       		.byte	0
+ 965 0286 06       		.uleb128 0x6
+ 966 0287 DF000000 		.4byte	.LASF23
+ 967 028b 01       		.byte	0x1
+ 968 028c 35       		.byte	0x35
+ 969 028d 77000000 		.4byte	0x77
+ 970 0291 00000000 		.4byte	.LFB38
+ 971 0295 1E000000 		.4byte	.LFE38-.LFB38
+ 972 0299 01       		.uleb128 0x1
+ 973 029a 9C       		.byte	0x9c
+ 974 029b DE020000 		.4byte	0x2de
+ 975 029f 07       		.uleb128 0x7
+ 976 02a0 81010000 		.4byte	.LASF17
+ 977 02a4 01       		.byte	0x1
+ 978 02a5 35       		.byte	0x35
+ 979 02a6 83000000 		.4byte	0x83
+ 980 02aa DC000000 		.4byte	.LLST6
+ 981 02ae 08       		.uleb128 0x8
+ 982 02af 72656700 		.ascii	"reg\000"
+ 983 02b3 01       		.byte	0x1
+ 984 02b4 35       		.byte	0x35
+ 985 02b5 6B000000 		.4byte	0x6b
+ 986 02b9 FD000000 		.4byte	.LLST7
+ 987 02bd 10       		.uleb128 0x10
+ 988 02be 46010000 		.4byte	.LASF24
+ 989 02c2 01       		.byte	0x1
+ 990 02c3 36       		.byte	0x36
+ 991 02c4 77000000 		.4byte	0x77
+ 992 02c8 1E010000 		.4byte	.LLST8
+ 993 02cc 0F       		.uleb128 0xf
+ 994 02cd 06000000 		.4byte	.LVL18
+ 995 02d1 B7000000 		.4byte	0xb7
+ 996 02d5 0B       		.uleb128 0xb
+ 997 02d6 01       		.uleb128 0x1
+ 998 02d7 50       		.byte	0x50
+ 999 02d8 03       		.uleb128 0x3
+ 1000 02d9 F3       		.byte	0xf3
+ARM GAS  C:\Users\sergio\AppData\Local\Temp\ccXoQ2wk.s 			page 21
+
+
+ 1001 02da 01       		.uleb128 0x1
+ 1002 02db 50       		.byte	0x50
+ 1003 02dc 00       		.byte	0
+ 1004 02dd 00       		.byte	0
+ 1005 02de 06       		.uleb128 0x6
+ 1006 02df 09000000 		.4byte	.LASF25
+ 1007 02e3 01       		.byte	0x1
+ 1008 02e4 3B       		.byte	0x3b
+ 1009 02e5 6B000000 		.4byte	0x6b
+ 1010 02e9 00000000 		.4byte	.LFB39
+ 1011 02ed 0A000000 		.4byte	.LFE39-.LFB39
+ 1012 02f1 01       		.uleb128 0x1
+ 1013 02f2 9C       		.byte	0x9c
+ 1014 02f3 36030000 		.4byte	0x336
+ 1015 02f7 07       		.uleb128 0x7
+ 1016 02f8 81010000 		.4byte	.LASF17
+ 1017 02fc 01       		.byte	0x1
+ 1018 02fd 3B       		.byte	0x3b
+ 1019 02fe 83000000 		.4byte	0x83
+ 1020 0302 3D010000 		.4byte	.LLST9
+ 1021 0306 08       		.uleb128 0x8
+ 1022 0307 72656700 		.ascii	"reg\000"
+ 1023 030b 01       		.byte	0x1
+ 1024 030c 3B       		.byte	0x3b
+ 1025 030d 6B000000 		.4byte	0x6b
+ 1026 0311 5E010000 		.4byte	.LLST10
+ 1027 0315 10       		.uleb128 0x10
+ 1028 0316 91000000 		.4byte	.LASF26
+ 1029 031a 01       		.byte	0x1
+ 1030 031b 3C       		.byte	0x3c
+ 1031 031c 6B000000 		.4byte	0x6b
+ 1032 0320 7F010000 		.4byte	.LLST11
+ 1033 0324 0F       		.uleb128 0xf
+ 1034 0325 06000000 		.4byte	.LVL22
+ 1035 0329 8A010000 		.4byte	0x18a
+ 1036 032d 0B       		.uleb128 0xb
+ 1037 032e 01       		.uleb128 0x1
+ 1038 032f 50       		.byte	0x50
+ 1039 0330 03       		.uleb128 0x3
+ 1040 0331 F3       		.byte	0xf3
+ 1041 0332 01       		.uleb128 0x1
+ 1042 0333 50       		.byte	0x50
+ 1043 0334 00       		.byte	0
+ 1044 0335 00       		.byte	0
+ 1045 0336 06       		.uleb128 0x6
+ 1046 0337 AB020000 		.4byte	.LASF27
+ 1047 033b 01       		.byte	0x1
+ 1048 033c 43       		.byte	0x43
+ 1049 033d 6B000000 		.4byte	0x6b
+ 1050 0341 00000000 		.4byte	.LFB40
+ 1051 0345 0A000000 		.4byte	.LFE40-.LFB40
+ 1052 0349 01       		.uleb128 0x1
+ 1053 034a 9C       		.byte	0x9c
+ 1054 034b 8E030000 		.4byte	0x38e
+ 1055 034f 07       		.uleb128 0x7
+ 1056 0350 81010000 		.4byte	.LASF17
+ 1057 0354 01       		.byte	0x1
+ARM GAS  C:\Users\sergio\AppData\Local\Temp\ccXoQ2wk.s 			page 22
+
+
+ 1058 0355 43       		.byte	0x43
+ 1059 0356 83000000 		.4byte	0x83
+ 1060 035a 93010000 		.4byte	.LLST12
+ 1061 035e 08       		.uleb128 0x8
+ 1062 035f 72656700 		.ascii	"reg\000"
+ 1063 0363 01       		.byte	0x1
+ 1064 0364 43       		.byte	0x43
+ 1065 0365 6B000000 		.4byte	0x6b
+ 1066 0369 B4010000 		.4byte	.LLST13
+ 1067 036d 10       		.uleb128 0x10
+ 1068 036e 91000000 		.4byte	.LASF26
+ 1069 0372 01       		.byte	0x1
+ 1070 0373 44       		.byte	0x44
+ 1071 0374 6B000000 		.4byte	0x6b
+ 1072 0378 D5010000 		.4byte	.LLST14
+ 1073 037c 0F       		.uleb128 0xf
+ 1074 037d 06000000 		.4byte	.LVL25
+ 1075 0381 8A010000 		.4byte	0x18a
+ 1076 0385 0B       		.uleb128 0xb
+ 1077 0386 01       		.uleb128 0x1
+ 1078 0387 50       		.byte	0x50
+ 1079 0388 03       		.uleb128 0x3
+ 1080 0389 F3       		.byte	0xf3
+ 1081 038a 01       		.uleb128 0x1
+ 1082 038b 50       		.byte	0x50
+ 1083 038c 00       		.byte	0
+ 1084 038d 00       		.byte	0
+ 1085 038e 11       		.uleb128 0x11
+ 1086 038f 33030000 		.4byte	.LASF28
+ 1087 0393 01       		.byte	0x1
+ 1088 0394 4A       		.byte	0x4a
+ 1089 0395 8F000000 		.4byte	0x8f
+ 1090 0399 00000000 		.4byte	.LFB41
+ 1091 039d 60000000 		.4byte	.LFE41-.LFB41
+ 1092 03a1 01       		.uleb128 0x1
+ 1093 03a2 9C       		.byte	0x9c
+ 1094 03a3 58040000 		.4byte	0x458
+ 1095 03a7 07       		.uleb128 0x7
+ 1096 03a8 81010000 		.4byte	.LASF17
+ 1097 03ac 01       		.byte	0x1
+ 1098 03ad 4A       		.byte	0x4a
+ 1099 03ae 83000000 		.4byte	0x83
+ 1100 03b2 E9010000 		.4byte	.LLST15
+ 1101 03b6 08       		.uleb128 0x8
+ 1102 03b7 72656700 		.ascii	"reg\000"
+ 1103 03bb 01       		.byte	0x1
+ 1104 03bc 4A       		.byte	0x4a
+ 1105 03bd 6B000000 		.4byte	0x6b
+ 1106 03c1 15020000 		.4byte	.LLST16
+ 1107 03c5 09       		.uleb128 0x9
+ 1108 03c6 76010000 		.4byte	.LASF18
+ 1109 03ca 01       		.byte	0x1
+ 1110 03cb 4B       		.byte	0x4b
+ 1111 03cc 65010000 		.4byte	0x165
+ 1112 03d0 02       		.uleb128 0x2
+ 1113 03d1 91       		.byte	0x91
+ 1114 03d2 74       		.sleb128 -12
+ARM GAS  C:\Users\sergio\AppData\Local\Temp\ccXoQ2wk.s 			page 23
+
+
+ 1115 03d3 09       		.uleb128 0x9
+ 1116 03d4 29000000 		.4byte	.LASF19
+ 1117 03d8 01       		.byte	0x1
+ 1118 03d9 4E       		.byte	0x4e
+ 1119 03da 68040000 		.4byte	0x468
+ 1120 03de 02       		.uleb128 0x2
+ 1121 03df 91       		.byte	0x91
+ 1122 03e0 70       		.sleb128 -16
+ 1123 03e1 10       		.uleb128 0x10
+ 1124 03e2 19010000 		.4byte	.LASF29
+ 1125 03e6 01       		.byte	0x1
+ 1126 03e7 56       		.byte	0x56
+ 1127 03e8 5D000000 		.4byte	0x5d
+ 1128 03ec 36020000 		.4byte	.LLST17
+ 1129 03f0 09       		.uleb128 0x9
+ 1130 03f1 62020000 		.4byte	.LASF30
+ 1131 03f5 01       		.byte	0x1
+ 1132 03f6 57       		.byte	0x57
+ 1133 03f7 8F000000 		.4byte	0x8f
+ 1134 03fb 01       		.uleb128 0x1
+ 1135 03fc 50       		.byte	0x50
+ 1136 03fd 0A       		.uleb128 0xa
+ 1137 03fe 18000000 		.4byte	.LVL28
+ 1138 0402 59070000 		.4byte	0x759
+ 1139 0406 21040000 		.4byte	0x421
+ 1140 040a 0B       		.uleb128 0xb
+ 1141 040b 01       		.uleb128 0x1
+ 1142 040c 50       		.byte	0x50
+ 1143 040d 02       		.uleb128 0x2
+ 1144 040e 74       		.byte	0x74
+ 1145 040f 00       		.sleb128 0
+ 1146 0410 0B       		.uleb128 0xb
+ 1147 0411 01       		.uleb128 0x1
+ 1148 0412 51       		.byte	0x51
+ 1149 0413 02       		.uleb128 0x2
+ 1150 0414 91       		.byte	0x91
+ 1151 0415 74       		.sleb128 -12
+ 1152 0416 0B       		.uleb128 0xb
+ 1153 0417 01       		.uleb128 0x1
+ 1154 0418 52       		.byte	0x52
+ 1155 0419 01       		.uleb128 0x1
+ 1156 041a 31       		.byte	0x31
+ 1157 041b 0B       		.uleb128 0xb
+ 1158 041c 01       		.uleb128 0x1
+ 1159 041d 53       		.byte	0x53
+ 1160 041e 01       		.uleb128 0x1
+ 1161 041f 32       		.byte	0x32
+ 1162 0420 00       		.byte	0
+ 1163 0421 0C       		.uleb128 0xc
+ 1164 0422 1C000000 		.4byte	.LVL29
+ 1165 0426 65070000 		.4byte	0x765
+ 1166 042a 0A       		.uleb128 0xa
+ 1167 042b 2C000000 		.4byte	.LVL30
+ 1168 042f 71070000 		.4byte	0x771
+ 1169 0433 4E040000 		.4byte	0x44e
+ 1170 0437 0B       		.uleb128 0xb
+ 1171 0438 01       		.uleb128 0x1
+ARM GAS  C:\Users\sergio\AppData\Local\Temp\ccXoQ2wk.s 			page 24
+
+
+ 1172 0439 50       		.byte	0x50
+ 1173 043a 02       		.uleb128 0x2
+ 1174 043b 74       		.byte	0x74
+ 1175 043c 00       		.sleb128 0
+ 1176 043d 0B       		.uleb128 0xb
+ 1177 043e 01       		.uleb128 0x1
+ 1178 043f 51       		.byte	0x51
+ 1179 0440 02       		.uleb128 0x2
+ 1180 0441 7D       		.byte	0x7d
+ 1181 0442 00       		.sleb128 0
+ 1182 0443 0B       		.uleb128 0xb
+ 1183 0444 01       		.uleb128 0x1
+ 1184 0445 52       		.byte	0x52
+ 1185 0446 01       		.uleb128 0x1
+ 1186 0447 34       		.byte	0x34
+ 1187 0448 0B       		.uleb128 0xb
+ 1188 0449 01       		.uleb128 0x1
+ 1189 044a 53       		.byte	0x53
+ 1190 044b 01       		.uleb128 0x1
+ 1191 044c 31       		.byte	0x31
+ 1192 044d 00       		.byte	0
+ 1193 044e 0C       		.uleb128 0xc
+ 1194 044f 30000000 		.4byte	.LVL31
+ 1195 0453 65070000 		.4byte	0x765
+ 1196 0457 00       		.byte	0
+ 1197 0458 0D       		.uleb128 0xd
+ 1198 0459 A4000000 		.4byte	0xa4
+ 1199 045d 68040000 		.4byte	0x468
+ 1200 0461 0E       		.uleb128 0xe
+ 1201 0462 B0000000 		.4byte	0xb0
+ 1202 0466 03       		.byte	0x3
+ 1203 0467 00       		.byte	0
+ 1204 0468 05       		.uleb128 0x5
+ 1205 0469 58040000 		.4byte	0x458
+ 1206 046d 11       		.uleb128 0x11
+ 1207 046e 67000000 		.4byte	.LASF31
+ 1208 0472 01       		.byte	0x1
+ 1209 0473 5C       		.byte	0x5c
+ 1210 0474 8F000000 		.4byte	0x8f
+ 1211 0478 00000000 		.4byte	.LFB42
+ 1212 047c 18000000 		.4byte	.LFE42-.LFB42
+ 1213 0480 01       		.uleb128 0x1
+ 1214 0481 9C       		.byte	0x9c
+ 1215 0482 D2040000 		.4byte	0x4d2
+ 1216 0486 07       		.uleb128 0x7
+ 1217 0487 81010000 		.4byte	.LASF17
+ 1218 048b 01       		.byte	0x1
+ 1219 048c 5C       		.byte	0x5c
+ 1220 048d 83000000 		.4byte	0x83
+ 1221 0491 49020000 		.4byte	.LLST18
+ 1222 0495 08       		.uleb128 0x8
+ 1223 0496 72656700 		.ascii	"reg\000"
+ 1224 049a 01       		.byte	0x1
+ 1225 049b 5C       		.byte	0x5c
+ 1226 049c 6B000000 		.4byte	0x6b
+ 1227 04a0 6A020000 		.4byte	.LLST19
+ 1228 04a4 10       		.uleb128 0x10
+ARM GAS  C:\Users\sergio\AppData\Local\Temp\ccXoQ2wk.s 			page 25
+
+
+ 1229 04a5 12030000 		.4byte	.LASF32
+ 1230 04a9 01       		.byte	0x1
+ 1231 04aa 5E       		.byte	0x5e
+ 1232 04ab 77000000 		.4byte	0x77
+ 1233 04af 8B020000 		.4byte	.LLST20
+ 1234 04b3 09       		.uleb128 0x9
+ 1235 04b4 54010000 		.4byte	.LASF33
+ 1236 04b8 01       		.byte	0x1
+ 1237 04b9 5F       		.byte	0x5f
+ 1238 04ba 8F000000 		.4byte	0x8f
+ 1239 04be 01       		.uleb128 0x1
+ 1240 04bf 50       		.byte	0x50
+ 1241 04c0 0F       		.uleb128 0xf
+ 1242 04c1 06000000 		.4byte	.LVL37
+ 1243 04c5 B7000000 		.4byte	0xb7
+ 1244 04c9 0B       		.uleb128 0xb
+ 1245 04ca 01       		.uleb128 0x1
+ 1246 04cb 50       		.byte	0x50
+ 1247 04cc 03       		.uleb128 0x3
+ 1248 04cd F3       		.byte	0xf3
+ 1249 04ce 01       		.uleb128 0x1
+ 1250 04cf 50       		.byte	0x50
+ 1251 04d0 00       		.byte	0
+ 1252 04d1 00       		.byte	0
+ 1253 04d2 11       		.uleb128 0x11
+ 1254 04d3 8E010000 		.4byte	.LASF34
+ 1255 04d7 01       		.byte	0x1
+ 1256 04d8 63       		.byte	0x63
+ 1257 04d9 8F000000 		.4byte	0x8f
+ 1258 04dd 00000000 		.4byte	.LFB43
+ 1259 04e1 18000000 		.4byte	.LFE43-.LFB43
+ 1260 04e5 01       		.uleb128 0x1
+ 1261 04e6 9C       		.byte	0x9c
+ 1262 04e7 37050000 		.4byte	0x537
+ 1263 04eb 07       		.uleb128 0x7
+ 1264 04ec 81010000 		.4byte	.LASF17
+ 1265 04f0 01       		.byte	0x1
+ 1266 04f1 63       		.byte	0x63
+ 1267 04f2 83000000 		.4byte	0x83
+ 1268 04f6 9E020000 		.4byte	.LLST21
+ 1269 04fa 08       		.uleb128 0x8
+ 1270 04fb 72656700 		.ascii	"reg\000"
+ 1271 04ff 01       		.byte	0x1
+ 1272 0500 63       		.byte	0x63
+ 1273 0501 6B000000 		.4byte	0x6b
+ 1274 0505 BF020000 		.4byte	.LLST22
+ 1275 0509 10       		.uleb128 0x10
+ 1276 050a 00000000 		.4byte	.LASF35
+ 1277 050e 01       		.byte	0x1
+ 1278 050f 65       		.byte	0x65
+ 1279 0510 77000000 		.4byte	0x77
+ 1280 0514 E0020000 		.4byte	.LLST23
+ 1281 0518 09       		.uleb128 0x9
+ 1282 0519 02010000 		.4byte	.LASF36
+ 1283 051d 01       		.byte	0x1
+ 1284 051e 66       		.byte	0x66
+ 1285 051f 8F000000 		.4byte	0x8f
+ARM GAS  C:\Users\sergio\AppData\Local\Temp\ccXoQ2wk.s 			page 26
+
+
+ 1286 0523 01       		.uleb128 0x1
+ 1287 0524 50       		.byte	0x50
+ 1288 0525 0F       		.uleb128 0xf
+ 1289 0526 06000000 		.4byte	.LVL41
+ 1290 052a B7000000 		.4byte	0xb7
+ 1291 052e 0B       		.uleb128 0xb
+ 1292 052f 01       		.uleb128 0x1
+ 1293 0530 50       		.byte	0x50
+ 1294 0531 03       		.uleb128 0x3
+ 1295 0532 F3       		.byte	0xf3
+ 1296 0533 01       		.uleb128 0x1
+ 1297 0534 50       		.byte	0x50
+ 1298 0535 00       		.byte	0
+ 1299 0536 00       		.byte	0
+ 1300 0537 06       		.uleb128 0x6
+ 1301 0538 ED000000 		.4byte	.LASF37
+ 1302 053c 01       		.byte	0x1
+ 1303 053d 6A       		.byte	0x6a
+ 1304 053e 77000000 		.4byte	0x77
+ 1305 0542 00000000 		.4byte	.LFB44
+ 1306 0546 24000000 		.4byte	.LFE44-.LFB44
+ 1307 054a 01       		.uleb128 0x1
+ 1308 054b 9C       		.byte	0x9c
+ 1309 054c D1050000 		.4byte	0x5d1
+ 1310 0550 07       		.uleb128 0x7
+ 1311 0551 81010000 		.4byte	.LASF17
+ 1312 0555 01       		.byte	0x1
+ 1313 0556 6A       		.byte	0x6a
+ 1314 0557 83000000 		.4byte	0x83
+ 1315 055b F3020000 		.4byte	.LLST24
+ 1316 055f 07       		.uleb128 0x7
+ 1317 0560 9D000000 		.4byte	.LASF38
+ 1318 0564 01       		.byte	0x1
+ 1319 0565 6A       		.byte	0x6a
+ 1320 0566 6B000000 		.4byte	0x6b
+ 1321 056a 1F030000 		.4byte	.LLST25
+ 1322 056e 07       		.uleb128 0x7
+ 1323 056f A2010000 		.4byte	.LASF39
+ 1324 0573 01       		.byte	0x1
+ 1325 0574 6A       		.byte	0x6a
+ 1326 0575 6B000000 		.4byte	0x6b
+ 1327 0579 40030000 		.4byte	.LLST26
+ 1328 057d 12       		.uleb128 0x12
+ 1329 057e 6C736200 		.ascii	"lsb\000"
+ 1330 0582 01       		.byte	0x1
+ 1331 0583 6B       		.byte	0x6b
+ 1332 0584 6B000000 		.4byte	0x6b
+ 1333 0588 61030000 		.4byte	.LLST27
+ 1334 058c 12       		.uleb128 0x12
+ 1335 058d 6D736200 		.ascii	"msb\000"
+ 1336 0591 01       		.byte	0x1
+ 1337 0592 6C       		.byte	0x6c
+ 1338 0593 6B000000 		.4byte	0x6b
+ 1339 0597 74030000 		.4byte	.LLST28
+ 1340 059b 13       		.uleb128 0x13
+ 1341 059c 7800     		.ascii	"x\000"
+ 1342 059e 01       		.byte	0x1
+ARM GAS  C:\Users\sergio\AppData\Local\Temp\ccXoQ2wk.s 			page 27
+
+
+ 1343 059f 6E       		.byte	0x6e
+ 1344 05a0 77000000 		.4byte	0x77
+ 1345 05a4 01       		.uleb128 0x1
+ 1346 05a5 50       		.byte	0x50
+ 1347 05a6 0A       		.uleb128 0xa
+ 1348 05a7 0A000000 		.4byte	.LVL45
+ 1349 05ab 8A010000 		.4byte	0x18a
+ 1350 05af BA050000 		.4byte	0x5ba
+ 1351 05b3 0B       		.uleb128 0xb
+ 1352 05b4 01       		.uleb128 0x1
+ 1353 05b5 50       		.byte	0x50
+ 1354 05b6 02       		.uleb128 0x2
+ 1355 05b7 75       		.byte	0x75
+ 1356 05b8 00       		.sleb128 0
+ 1357 05b9 00       		.byte	0
+ 1358 05ba 0F       		.uleb128 0xf
+ 1359 05bb 14000000 		.4byte	.LVL47
+ 1360 05bf 8A010000 		.4byte	0x18a
+ 1361 05c3 0B       		.uleb128 0xb
+ 1362 05c4 01       		.uleb128 0x1
+ 1363 05c5 50       		.byte	0x50
+ 1364 05c6 02       		.uleb128 0x2
+ 1365 05c7 75       		.byte	0x75
+ 1366 05c8 00       		.sleb128 0
+ 1367 05c9 0B       		.uleb128 0xb
+ 1368 05ca 01       		.uleb128 0x1
+ 1369 05cb 51       		.byte	0x51
+ 1370 05cc 02       		.uleb128 0x2
+ 1371 05cd 76       		.byte	0x76
+ 1372 05ce 00       		.sleb128 0
+ 1373 05cf 00       		.byte	0
+ 1374 05d0 00       		.byte	0
+ 1375 05d1 06       		.uleb128 0x6
+ 1376 05d2 B2000000 		.4byte	.LASF40
+ 1377 05d6 01       		.byte	0x1
+ 1378 05d7 74       		.byte	0x74
+ 1379 05d8 77000000 		.4byte	0x77
+ 1380 05dc 00000000 		.4byte	.LFB45
+ 1381 05e0 24000000 		.4byte	.LFE45-.LFB45
+ 1382 05e4 01       		.uleb128 0x1
+ 1383 05e5 9C       		.byte	0x9c
+ 1384 05e6 6B060000 		.4byte	0x66b
+ 1385 05ea 07       		.uleb128 0x7
+ 1386 05eb 81010000 		.4byte	.LASF17
+ 1387 05ef 01       		.byte	0x1
+ 1388 05f0 74       		.byte	0x74
+ 1389 05f1 83000000 		.4byte	0x83
+ 1390 05f5 87030000 		.4byte	.LLST29
+ 1391 05f9 07       		.uleb128 0x7
+ 1392 05fa 9D000000 		.4byte	.LASF38
+ 1393 05fe 01       		.byte	0x1
+ 1394 05ff 74       		.byte	0x74
+ 1395 0600 6B000000 		.4byte	0x6b
+ 1396 0604 B3030000 		.4byte	.LLST30
+ 1397 0608 07       		.uleb128 0x7
+ 1398 0609 A2010000 		.4byte	.LASF39
+ 1399 060d 01       		.byte	0x1
+ARM GAS  C:\Users\sergio\AppData\Local\Temp\ccXoQ2wk.s 			page 28
+
+
+ 1400 060e 74       		.byte	0x74
+ 1401 060f 6B000000 		.4byte	0x6b
+ 1402 0613 D4030000 		.4byte	.LLST31
+ 1403 0617 12       		.uleb128 0x12
+ 1404 0618 6C736200 		.ascii	"lsb\000"
+ 1405 061c 01       		.byte	0x1
+ 1406 061d 75       		.byte	0x75
+ 1407 061e 6B000000 		.4byte	0x6b
+ 1408 0622 F5030000 		.4byte	.LLST32
+ 1409 0626 12       		.uleb128 0x12
+ 1410 0627 6D736200 		.ascii	"msb\000"
+ 1411 062b 01       		.byte	0x1
+ 1412 062c 76       		.byte	0x76
+ 1413 062d 6B000000 		.4byte	0x6b
+ 1414 0631 08040000 		.4byte	.LLST33
+ 1415 0635 13       		.uleb128 0x13
+ 1416 0636 7900     		.ascii	"y\000"
+ 1417 0638 01       		.byte	0x1
+ 1418 0639 78       		.byte	0x78
+ 1419 063a 77000000 		.4byte	0x77
+ 1420 063e 01       		.uleb128 0x1
+ 1421 063f 50       		.byte	0x50
+ 1422 0640 0A       		.uleb128 0xa
+ 1423 0641 0A000000 		.4byte	.LVL54
+ 1424 0645 8A010000 		.4byte	0x18a
+ 1425 0649 54060000 		.4byte	0x654
+ 1426 064d 0B       		.uleb128 0xb
+ 1427 064e 01       		.uleb128 0x1
+ 1428 064f 50       		.byte	0x50
+ 1429 0650 02       		.uleb128 0x2
+ 1430 0651 75       		.byte	0x75
+ 1431 0652 00       		.sleb128 0
+ 1432 0653 00       		.byte	0
+ 1433 0654 0F       		.uleb128 0xf
+ 1434 0655 14000000 		.4byte	.LVL56
+ 1435 0659 8A010000 		.4byte	0x18a
+ 1436 065d 0B       		.uleb128 0xb
+ 1437 065e 01       		.uleb128 0x1
+ 1438 065f 50       		.byte	0x50
+ 1439 0660 02       		.uleb128 0x2
+ 1440 0661 75       		.byte	0x75
+ 1441 0662 00       		.sleb128 0
+ 1442 0663 0B       		.uleb128 0xb
+ 1443 0664 01       		.uleb128 0x1
+ 1444 0665 51       		.byte	0x51
+ 1445 0666 02       		.uleb128 0x2
+ 1446 0667 76       		.byte	0x76
+ 1447 0668 00       		.sleb128 0
+ 1448 0669 00       		.byte	0
+ 1449 066a 00       		.byte	0
+ 1450 066b 06       		.uleb128 0x6
+ 1451 066c 52000000 		.4byte	.LASF41
+ 1452 0670 01       		.byte	0x1
+ 1453 0671 7E       		.byte	0x7e
+ 1454 0672 77000000 		.4byte	0x77
+ 1455 0676 00000000 		.4byte	.LFB46
+ 1456 067a 24000000 		.4byte	.LFE46-.LFB46
+ARM GAS  C:\Users\sergio\AppData\Local\Temp\ccXoQ2wk.s 			page 29
+
+
+ 1457 067e 01       		.uleb128 0x1
+ 1458 067f 9C       		.byte	0x9c
+ 1459 0680 05070000 		.4byte	0x705
+ 1460 0684 07       		.uleb128 0x7
+ 1461 0685 81010000 		.4byte	.LASF17
+ 1462 0689 01       		.byte	0x1
+ 1463 068a 7E       		.byte	0x7e
+ 1464 068b 83000000 		.4byte	0x83
+ 1465 068f 1B040000 		.4byte	.LLST34
+ 1466 0693 07       		.uleb128 0x7
+ 1467 0694 9D000000 		.4byte	.LASF38
+ 1468 0698 01       		.byte	0x1
+ 1469 0699 7E       		.byte	0x7e
+ 1470 069a 6B000000 		.4byte	0x6b
+ 1471 069e 47040000 		.4byte	.LLST35
+ 1472 06a2 07       		.uleb128 0x7
+ 1473 06a3 A2010000 		.4byte	.LASF39
+ 1474 06a7 01       		.byte	0x1
+ 1475 06a8 7E       		.byte	0x7e
+ 1476 06a9 6B000000 		.4byte	0x6b
+ 1477 06ad 68040000 		.4byte	.LLST36
+ 1478 06b1 12       		.uleb128 0x12
+ 1479 06b2 6C736200 		.ascii	"lsb\000"
+ 1480 06b6 01       		.byte	0x1
+ 1481 06b7 7F       		.byte	0x7f
+ 1482 06b8 6B000000 		.4byte	0x6b
+ 1483 06bc 89040000 		.4byte	.LLST37
+ 1484 06c0 12       		.uleb128 0x12
+ 1485 06c1 6D736200 		.ascii	"msb\000"
+ 1486 06c5 01       		.byte	0x1
+ 1487 06c6 80       		.byte	0x80
+ 1488 06c7 6B000000 		.4byte	0x6b
+ 1489 06cb 9C040000 		.4byte	.LLST38
+ 1490 06cf 13       		.uleb128 0x13
+ 1491 06d0 7A00     		.ascii	"z\000"
+ 1492 06d2 01       		.byte	0x1
+ 1493 06d3 82       		.byte	0x82
+ 1494 06d4 77000000 		.4byte	0x77
+ 1495 06d8 01       		.uleb128 0x1
+ 1496 06d9 50       		.byte	0x50
+ 1497 06da 0A       		.uleb128 0xa
+ 1498 06db 0A000000 		.4byte	.LVL63
+ 1499 06df 8A010000 		.4byte	0x18a
+ 1500 06e3 EE060000 		.4byte	0x6ee
+ 1501 06e7 0B       		.uleb128 0xb
+ 1502 06e8 01       		.uleb128 0x1
+ 1503 06e9 50       		.byte	0x50
+ 1504 06ea 02       		.uleb128 0x2
+ 1505 06eb 75       		.byte	0x75
+ 1506 06ec 00       		.sleb128 0
+ 1507 06ed 00       		.byte	0
+ 1508 06ee 0F       		.uleb128 0xf
+ 1509 06ef 14000000 		.4byte	.LVL65
+ 1510 06f3 8A010000 		.4byte	0x18a
+ 1511 06f7 0B       		.uleb128 0xb
+ 1512 06f8 01       		.uleb128 0x1
+ 1513 06f9 50       		.byte	0x50
+ARM GAS  C:\Users\sergio\AppData\Local\Temp\ccXoQ2wk.s 			page 30
+
+
+ 1514 06fa 02       		.uleb128 0x2
+ 1515 06fb 75       		.byte	0x75
+ 1516 06fc 00       		.sleb128 0
+ 1517 06fd 0B       		.uleb128 0xb
+ 1518 06fe 01       		.uleb128 0x1
+ 1519 06ff 51       		.byte	0x51
+ 1520 0700 02       		.uleb128 0x2
+ 1521 0701 76       		.byte	0x76
+ 1522 0702 00       		.sleb128 0
+ 1523 0703 00       		.byte	0
+ 1524 0704 00       		.byte	0
+ 1525 0705 06       		.uleb128 0x6
+ 1526 0706 25010000 		.4byte	.LASF42
+ 1527 070a 01       		.byte	0x1
+ 1528 070b 88       		.byte	0x88
+ 1529 070c 77000000 		.4byte	0x77
+ 1530 0710 00000000 		.4byte	.LFB47
+ 1531 0714 0A000000 		.4byte	.LFE47-.LFB47
+ 1532 0718 01       		.uleb128 0x1
+ 1533 0719 9C       		.byte	0x9c
+ 1534 071a 59070000 		.4byte	0x759
+ 1535 071e 07       		.uleb128 0x7
+ 1536 071f 81010000 		.4byte	.LASF17
+ 1537 0723 01       		.byte	0x1
+ 1538 0724 88       		.byte	0x88
+ 1539 0725 83000000 		.4byte	0x83
+ 1540 0729 AF040000 		.4byte	.LLST39
+ 1541 072d 08       		.uleb128 0x8
+ 1542 072e 72656700 		.ascii	"reg\000"
+ 1543 0732 01       		.byte	0x1
+ 1544 0733 88       		.byte	0x88
+ 1545 0734 6B000000 		.4byte	0x6b
+ 1546 0738 D0040000 		.4byte	.LLST40
+ 1547 073c 14       		.uleb128 0x14
+ 1548 073d 4F010000 		.4byte	.LASF49
+ 1549 0741 01       		.byte	0x1
+ 1550 0742 8A       		.byte	0x8a
+ 1551 0743 77000000 		.4byte	0x77
+ 1552 0747 0F       		.uleb128 0xf
+ 1553 0748 06000000 		.4byte	.LVL72
+ 1554 074c 8A010000 		.4byte	0x18a
+ 1555 0750 0B       		.uleb128 0xb
+ 1556 0751 01       		.uleb128 0x1
+ 1557 0752 50       		.byte	0x50
+ 1558 0753 03       		.uleb128 0x3
+ 1559 0754 F3       		.byte	0xf3
+ 1560 0755 01       		.uleb128 0x1
+ 1561 0756 50       		.byte	0x50
+ 1562 0757 00       		.byte	0
+ 1563 0758 00       		.byte	0
+ 1564 0759 15       		.uleb128 0x15
+ 1565 075a 40030000 		.4byte	.LASF43
+ 1566 075e 40030000 		.4byte	.LASF43
+ 1567 0762 03       		.byte	0x3
+ 1568 0763 1301     		.2byte	0x113
+ 1569 0765 15       		.uleb128 0x15
+ 1570 0766 FC020000 		.4byte	.LASF44
+ARM GAS  C:\Users\sergio\AppData\Local\Temp\ccXoQ2wk.s 			page 31
+
+
+ 1571 076a FC020000 		.4byte	.LASF44
+ 1572 076e 03       		.byte	0x3
+ 1573 076f 0F01     		.2byte	0x10f
+ 1574 0771 15       		.uleb128 0x15
+ 1575 0772 8A020000 		.4byte	.LASF45
+ 1576 0776 8A020000 		.4byte	.LASF45
+ 1577 077a 03       		.byte	0x3
+ 1578 077b 1401     		.2byte	0x114
+ 1579 077d 00       		.byte	0
+ 1580              		.section	.debug_abbrev,"",%progbits
+ 1581              	.Ldebug_abbrev0:
+ 1582 0000 01       		.uleb128 0x1
+ 1583 0001 11       		.uleb128 0x11
+ 1584 0002 01       		.byte	0x1
+ 1585 0003 25       		.uleb128 0x25
+ 1586 0004 0E       		.uleb128 0xe
+ 1587 0005 13       		.uleb128 0x13
+ 1588 0006 0B       		.uleb128 0xb
+ 1589 0007 03       		.uleb128 0x3
+ 1590 0008 0E       		.uleb128 0xe
+ 1591 0009 1B       		.uleb128 0x1b
+ 1592 000a 0E       		.uleb128 0xe
+ 1593 000b 55       		.uleb128 0x55
+ 1594 000c 17       		.uleb128 0x17
+ 1595 000d 11       		.uleb128 0x11
+ 1596 000e 01       		.uleb128 0x1
+ 1597 000f 10       		.uleb128 0x10
+ 1598 0010 17       		.uleb128 0x17
+ 1599 0011 00       		.byte	0
+ 1600 0012 00       		.byte	0
+ 1601 0013 02       		.uleb128 0x2
+ 1602 0014 24       		.uleb128 0x24
+ 1603 0015 00       		.byte	0
+ 1604 0016 0B       		.uleb128 0xb
+ 1605 0017 0B       		.uleb128 0xb
+ 1606 0018 3E       		.uleb128 0x3e
+ 1607 0019 0B       		.uleb128 0xb
+ 1608 001a 03       		.uleb128 0x3
+ 1609 001b 0E       		.uleb128 0xe
+ 1610 001c 00       		.byte	0
+ 1611 001d 00       		.byte	0
+ 1612 001e 03       		.uleb128 0x3
+ 1613 001f 24       		.uleb128 0x24
+ 1614 0020 00       		.byte	0
+ 1615 0021 0B       		.uleb128 0xb
+ 1616 0022 0B       		.uleb128 0xb
+ 1617 0023 3E       		.uleb128 0x3e
+ 1618 0024 0B       		.uleb128 0xb
+ 1619 0025 03       		.uleb128 0x3
+ 1620 0026 08       		.uleb128 0x8
+ 1621 0027 00       		.byte	0
+ 1622 0028 00       		.byte	0
+ 1623 0029 04       		.uleb128 0x4
+ 1624 002a 16       		.uleb128 0x16
+ 1625 002b 00       		.byte	0
+ 1626 002c 03       		.uleb128 0x3
+ 1627 002d 0E       		.uleb128 0xe
+ARM GAS  C:\Users\sergio\AppData\Local\Temp\ccXoQ2wk.s 			page 32
+
+
+ 1628 002e 3A       		.uleb128 0x3a
+ 1629 002f 0B       		.uleb128 0xb
+ 1630 0030 3B       		.uleb128 0x3b
+ 1631 0031 05       		.uleb128 0x5
+ 1632 0032 49       		.uleb128 0x49
+ 1633 0033 13       		.uleb128 0x13
+ 1634 0034 00       		.byte	0
+ 1635 0035 00       		.byte	0
+ 1636 0036 05       		.uleb128 0x5
+ 1637 0037 35       		.uleb128 0x35
+ 1638 0038 00       		.byte	0
+ 1639 0039 49       		.uleb128 0x49
+ 1640 003a 13       		.uleb128 0x13
+ 1641 003b 00       		.byte	0
+ 1642 003c 00       		.byte	0
+ 1643 003d 06       		.uleb128 0x6
+ 1644 003e 2E       		.uleb128 0x2e
+ 1645 003f 01       		.byte	0x1
+ 1646 0040 3F       		.uleb128 0x3f
+ 1647 0041 19       		.uleb128 0x19
+ 1648 0042 03       		.uleb128 0x3
+ 1649 0043 0E       		.uleb128 0xe
+ 1650 0044 3A       		.uleb128 0x3a
+ 1651 0045 0B       		.uleb128 0xb
+ 1652 0046 3B       		.uleb128 0x3b
+ 1653 0047 0B       		.uleb128 0xb
+ 1654 0048 27       		.uleb128 0x27
+ 1655 0049 19       		.uleb128 0x19
+ 1656 004a 49       		.uleb128 0x49
+ 1657 004b 13       		.uleb128 0x13
+ 1658 004c 11       		.uleb128 0x11
+ 1659 004d 01       		.uleb128 0x1
+ 1660 004e 12       		.uleb128 0x12
+ 1661 004f 06       		.uleb128 0x6
+ 1662 0050 40       		.uleb128 0x40
+ 1663 0051 18       		.uleb128 0x18
+ 1664 0052 9742     		.uleb128 0x2117
+ 1665 0054 19       		.uleb128 0x19
+ 1666 0055 01       		.uleb128 0x1
+ 1667 0056 13       		.uleb128 0x13
+ 1668 0057 00       		.byte	0
+ 1669 0058 00       		.byte	0
+ 1670 0059 07       		.uleb128 0x7
+ 1671 005a 05       		.uleb128 0x5
+ 1672 005b 00       		.byte	0
+ 1673 005c 03       		.uleb128 0x3
+ 1674 005d 0E       		.uleb128 0xe
+ 1675 005e 3A       		.uleb128 0x3a
+ 1676 005f 0B       		.uleb128 0xb
+ 1677 0060 3B       		.uleb128 0x3b
+ 1678 0061 0B       		.uleb128 0xb
+ 1679 0062 49       		.uleb128 0x49
+ 1680 0063 13       		.uleb128 0x13
+ 1681 0064 02       		.uleb128 0x2
+ 1682 0065 17       		.uleb128 0x17
+ 1683 0066 00       		.byte	0
+ 1684 0067 00       		.byte	0
+ARM GAS  C:\Users\sergio\AppData\Local\Temp\ccXoQ2wk.s 			page 33
+
+
+ 1685 0068 08       		.uleb128 0x8
+ 1686 0069 05       		.uleb128 0x5
+ 1687 006a 00       		.byte	0
+ 1688 006b 03       		.uleb128 0x3
+ 1689 006c 08       		.uleb128 0x8
+ 1690 006d 3A       		.uleb128 0x3a
+ 1691 006e 0B       		.uleb128 0xb
+ 1692 006f 3B       		.uleb128 0x3b
+ 1693 0070 0B       		.uleb128 0xb
+ 1694 0071 49       		.uleb128 0x49
+ 1695 0072 13       		.uleb128 0x13
+ 1696 0073 02       		.uleb128 0x2
+ 1697 0074 17       		.uleb128 0x17
+ 1698 0075 00       		.byte	0
+ 1699 0076 00       		.byte	0
+ 1700 0077 09       		.uleb128 0x9
+ 1701 0078 34       		.uleb128 0x34
+ 1702 0079 00       		.byte	0
+ 1703 007a 03       		.uleb128 0x3
+ 1704 007b 0E       		.uleb128 0xe
+ 1705 007c 3A       		.uleb128 0x3a
+ 1706 007d 0B       		.uleb128 0xb
+ 1707 007e 3B       		.uleb128 0x3b
+ 1708 007f 0B       		.uleb128 0xb
+ 1709 0080 49       		.uleb128 0x49
+ 1710 0081 13       		.uleb128 0x13
+ 1711 0082 02       		.uleb128 0x2
+ 1712 0083 18       		.uleb128 0x18
+ 1713 0084 00       		.byte	0
+ 1714 0085 00       		.byte	0
+ 1715 0086 0A       		.uleb128 0xa
+ 1716 0087 898201   		.uleb128 0x4109
+ 1717 008a 01       		.byte	0x1
+ 1718 008b 11       		.uleb128 0x11
+ 1719 008c 01       		.uleb128 0x1
+ 1720 008d 31       		.uleb128 0x31
+ 1721 008e 13       		.uleb128 0x13
+ 1722 008f 01       		.uleb128 0x1
+ 1723 0090 13       		.uleb128 0x13
+ 1724 0091 00       		.byte	0
+ 1725 0092 00       		.byte	0
+ 1726 0093 0B       		.uleb128 0xb
+ 1727 0094 8A8201   		.uleb128 0x410a
+ 1728 0097 00       		.byte	0
+ 1729 0098 02       		.uleb128 0x2
+ 1730 0099 18       		.uleb128 0x18
+ 1731 009a 9142     		.uleb128 0x2111
+ 1732 009c 18       		.uleb128 0x18
+ 1733 009d 00       		.byte	0
+ 1734 009e 00       		.byte	0
+ 1735 009f 0C       		.uleb128 0xc
+ 1736 00a0 898201   		.uleb128 0x4109
+ 1737 00a3 00       		.byte	0
+ 1738 00a4 11       		.uleb128 0x11
+ 1739 00a5 01       		.uleb128 0x1
+ 1740 00a6 31       		.uleb128 0x31
+ 1741 00a7 13       		.uleb128 0x13
+ARM GAS  C:\Users\sergio\AppData\Local\Temp\ccXoQ2wk.s 			page 34
+
+
+ 1742 00a8 00       		.byte	0
+ 1743 00a9 00       		.byte	0
+ 1744 00aa 0D       		.uleb128 0xd
+ 1745 00ab 01       		.uleb128 0x1
+ 1746 00ac 01       		.byte	0x1
+ 1747 00ad 49       		.uleb128 0x49
+ 1748 00ae 13       		.uleb128 0x13
+ 1749 00af 01       		.uleb128 0x1
+ 1750 00b0 13       		.uleb128 0x13
+ 1751 00b1 00       		.byte	0
+ 1752 00b2 00       		.byte	0
+ 1753 00b3 0E       		.uleb128 0xe
+ 1754 00b4 21       		.uleb128 0x21
+ 1755 00b5 00       		.byte	0
+ 1756 00b6 49       		.uleb128 0x49
+ 1757 00b7 13       		.uleb128 0x13
+ 1758 00b8 2F       		.uleb128 0x2f
+ 1759 00b9 0B       		.uleb128 0xb
+ 1760 00ba 00       		.byte	0
+ 1761 00bb 00       		.byte	0
+ 1762 00bc 0F       		.uleb128 0xf
+ 1763 00bd 898201   		.uleb128 0x4109
+ 1764 00c0 01       		.byte	0x1
+ 1765 00c1 11       		.uleb128 0x11
+ 1766 00c2 01       		.uleb128 0x1
+ 1767 00c3 31       		.uleb128 0x31
+ 1768 00c4 13       		.uleb128 0x13
+ 1769 00c5 00       		.byte	0
+ 1770 00c6 00       		.byte	0
+ 1771 00c7 10       		.uleb128 0x10
+ 1772 00c8 34       		.uleb128 0x34
+ 1773 00c9 00       		.byte	0
+ 1774 00ca 03       		.uleb128 0x3
+ 1775 00cb 0E       		.uleb128 0xe
+ 1776 00cc 3A       		.uleb128 0x3a
+ 1777 00cd 0B       		.uleb128 0xb
+ 1778 00ce 3B       		.uleb128 0x3b
+ 1779 00cf 0B       		.uleb128 0xb
+ 1780 00d0 49       		.uleb128 0x49
+ 1781 00d1 13       		.uleb128 0x13
+ 1782 00d2 02       		.uleb128 0x2
+ 1783 00d3 17       		.uleb128 0x17
+ 1784 00d4 00       		.byte	0
+ 1785 00d5 00       		.byte	0
+ 1786 00d6 11       		.uleb128 0x11
+ 1787 00d7 2E       		.uleb128 0x2e
+ 1788 00d8 01       		.byte	0x1
+ 1789 00d9 3F       		.uleb128 0x3f
+ 1790 00da 19       		.uleb128 0x19
+ 1791 00db 03       		.uleb128 0x3
+ 1792 00dc 0E       		.uleb128 0xe
+ 1793 00dd 3A       		.uleb128 0x3a
+ 1794 00de 0B       		.uleb128 0xb
+ 1795 00df 3B       		.uleb128 0x3b
+ 1796 00e0 0B       		.uleb128 0xb
+ 1797 00e1 27       		.uleb128 0x27
+ 1798 00e2 19       		.uleb128 0x19
+ARM GAS  C:\Users\sergio\AppData\Local\Temp\ccXoQ2wk.s 			page 35
+
+
+ 1799 00e3 49       		.uleb128 0x49
+ 1800 00e4 13       		.uleb128 0x13
+ 1801 00e5 11       		.uleb128 0x11
+ 1802 00e6 01       		.uleb128 0x1
+ 1803 00e7 12       		.uleb128 0x12
+ 1804 00e8 06       		.uleb128 0x6
+ 1805 00e9 40       		.uleb128 0x40
+ 1806 00ea 18       		.uleb128 0x18
+ 1807 00eb 9642     		.uleb128 0x2116
+ 1808 00ed 19       		.uleb128 0x19
+ 1809 00ee 01       		.uleb128 0x1
+ 1810 00ef 13       		.uleb128 0x13
+ 1811 00f0 00       		.byte	0
+ 1812 00f1 00       		.byte	0
+ 1813 00f2 12       		.uleb128 0x12
+ 1814 00f3 34       		.uleb128 0x34
+ 1815 00f4 00       		.byte	0
+ 1816 00f5 03       		.uleb128 0x3
+ 1817 00f6 08       		.uleb128 0x8
+ 1818 00f7 3A       		.uleb128 0x3a
+ 1819 00f8 0B       		.uleb128 0xb
+ 1820 00f9 3B       		.uleb128 0x3b
+ 1821 00fa 0B       		.uleb128 0xb
+ 1822 00fb 49       		.uleb128 0x49
+ 1823 00fc 13       		.uleb128 0x13
+ 1824 00fd 02       		.uleb128 0x2
+ 1825 00fe 17       		.uleb128 0x17
+ 1826 00ff 00       		.byte	0
+ 1827 0100 00       		.byte	0
+ 1828 0101 13       		.uleb128 0x13
+ 1829 0102 34       		.uleb128 0x34
+ 1830 0103 00       		.byte	0
+ 1831 0104 03       		.uleb128 0x3
+ 1832 0105 08       		.uleb128 0x8
+ 1833 0106 3A       		.uleb128 0x3a
+ 1834 0107 0B       		.uleb128 0xb
+ 1835 0108 3B       		.uleb128 0x3b
+ 1836 0109 0B       		.uleb128 0xb
+ 1837 010a 49       		.uleb128 0x49
+ 1838 010b 13       		.uleb128 0x13
+ 1839 010c 02       		.uleb128 0x2
+ 1840 010d 18       		.uleb128 0x18
+ 1841 010e 00       		.byte	0
+ 1842 010f 00       		.byte	0
+ 1843 0110 14       		.uleb128 0x14
+ 1844 0111 34       		.uleb128 0x34
+ 1845 0112 00       		.byte	0
+ 1846 0113 03       		.uleb128 0x3
+ 1847 0114 0E       		.uleb128 0xe
+ 1848 0115 3A       		.uleb128 0x3a
+ 1849 0116 0B       		.uleb128 0xb
+ 1850 0117 3B       		.uleb128 0x3b
+ 1851 0118 0B       		.uleb128 0xb
+ 1852 0119 49       		.uleb128 0x49
+ 1853 011a 13       		.uleb128 0x13
+ 1854 011b 00       		.byte	0
+ 1855 011c 00       		.byte	0
+ARM GAS  C:\Users\sergio\AppData\Local\Temp\ccXoQ2wk.s 			page 36
+
+
+ 1856 011d 15       		.uleb128 0x15
+ 1857 011e 2E       		.uleb128 0x2e
+ 1858 011f 00       		.byte	0
+ 1859 0120 3F       		.uleb128 0x3f
+ 1860 0121 19       		.uleb128 0x19
+ 1861 0122 3C       		.uleb128 0x3c
+ 1862 0123 19       		.uleb128 0x19
+ 1863 0124 6E       		.uleb128 0x6e
+ 1864 0125 0E       		.uleb128 0xe
+ 1865 0126 03       		.uleb128 0x3
+ 1866 0127 0E       		.uleb128 0xe
+ 1867 0128 3A       		.uleb128 0x3a
+ 1868 0129 0B       		.uleb128 0xb
+ 1869 012a 3B       		.uleb128 0x3b
+ 1870 012b 05       		.uleb128 0x5
+ 1871 012c 00       		.byte	0
+ 1872 012d 00       		.byte	0
+ 1873 012e 00       		.byte	0
+ 1874              		.section	.debug_loc,"",%progbits
+ 1875              	.Ldebug_loc0:
+ 1876              	.LLST0:
+ 1877 0000 00000000 		.4byte	.LVL0
+ 1878 0004 1B000000 		.4byte	.LVL2-1
+ 1879 0008 0100     		.2byte	0x1
+ 1880 000a 50       		.byte	0x50
+ 1881 000b 1B000000 		.4byte	.LVL2-1
+ 1882 000f 44000000 		.4byte	.LVL6
+ 1883 0013 0100     		.2byte	0x1
+ 1884 0015 54       		.byte	0x54
+ 1885 0016 44000000 		.4byte	.LVL6
+ 1886 001a 46000000 		.4byte	.LFE35
+ 1887 001e 0400     		.2byte	0x4
+ 1888 0020 F3       		.byte	0xf3
+ 1889 0021 01       		.uleb128 0x1
+ 1890 0022 50       		.byte	0x50
+ 1891 0023 9F       		.byte	0x9f
+ 1892 0024 00000000 		.4byte	0
+ 1893 0028 00000000 		.4byte	0
+ 1894              	.LLST1:
+ 1895 002c 00000000 		.4byte	.LVL0
+ 1896 0030 0A000000 		.4byte	.LVL1
+ 1897 0034 0100     		.2byte	0x1
+ 1898 0036 51       		.byte	0x51
+ 1899 0037 0A000000 		.4byte	.LVL1
+ 1900 003b 46000000 		.4byte	.LFE35
+ 1901 003f 0400     		.2byte	0x4
+ 1902 0041 F3       		.byte	0xf3
+ 1903 0042 01       		.uleb128 0x1
+ 1904 0043 51       		.byte	0x51
+ 1905 0044 9F       		.byte	0x9f
+ 1906 0045 00000000 		.4byte	0
+ 1907 0049 00000000 		.4byte	0
+ 1908              	.LLST2:
+ 1909 004d 00000000 		.4byte	.LVL7
+ 1910 0051 1B000000 		.4byte	.LVL9-1
+ 1911 0055 0100     		.2byte	0x1
+ 1912 0057 50       		.byte	0x50
+ARM GAS  C:\Users\sergio\AppData\Local\Temp\ccXoQ2wk.s 			page 37
+
+
+ 1913 0058 1B000000 		.4byte	.LVL9-1
+ 1914 005c 40000000 		.4byte	.LVL13
+ 1915 0060 0100     		.2byte	0x1
+ 1916 0062 54       		.byte	0x54
+ 1917 0063 40000000 		.4byte	.LVL13
+ 1918 0067 42000000 		.4byte	.LFE36
+ 1919 006b 0400     		.2byte	0x4
+ 1920 006d F3       		.byte	0xf3
+ 1921 006e 01       		.uleb128 0x1
+ 1922 006f 50       		.byte	0x50
+ 1923 0070 9F       		.byte	0x9f
+ 1924 0071 00000000 		.4byte	0
+ 1925 0075 00000000 		.4byte	0
+ 1926              	.LLST3:
+ 1927 0079 00000000 		.4byte	.LVL7
+ 1928 007d 0A000000 		.4byte	.LVL8
+ 1929 0081 0100     		.2byte	0x1
+ 1930 0083 51       		.byte	0x51
+ 1931 0084 0A000000 		.4byte	.LVL8
+ 1932 0088 42000000 		.4byte	.LFE36
+ 1933 008c 0400     		.2byte	0x4
+ 1934 008e F3       		.byte	0xf3
+ 1935 008f 01       		.uleb128 0x1
+ 1936 0090 51       		.byte	0x51
+ 1937 0091 9F       		.byte	0x9f
+ 1938 0092 00000000 		.4byte	0
+ 1939 0096 00000000 		.4byte	0
+ 1940              	.LLST4:
+ 1941 009a 00000000 		.4byte	.LVL14
+ 1942 009e 05000000 		.4byte	.LVL15-1
+ 1943 00a2 0100     		.2byte	0x1
+ 1944 00a4 50       		.byte	0x50
+ 1945 00a5 05000000 		.4byte	.LVL15-1
+ 1946 00a9 0E000000 		.4byte	.LFE37
+ 1947 00ad 0400     		.2byte	0x4
+ 1948 00af F3       		.byte	0xf3
+ 1949 00b0 01       		.uleb128 0x1
+ 1950 00b1 50       		.byte	0x50
+ 1951 00b2 9F       		.byte	0x9f
+ 1952 00b3 00000000 		.4byte	0
+ 1953 00b7 00000000 		.4byte	0
+ 1954              	.LLST5:
+ 1955 00bb 00000000 		.4byte	.LVL14
+ 1956 00bf 05000000 		.4byte	.LVL15-1
+ 1957 00c3 0100     		.2byte	0x1
+ 1958 00c5 51       		.byte	0x51
+ 1959 00c6 05000000 		.4byte	.LVL15-1
+ 1960 00ca 0E000000 		.4byte	.LFE37
+ 1961 00ce 0400     		.2byte	0x4
+ 1962 00d0 F3       		.byte	0xf3
+ 1963 00d1 01       		.uleb128 0x1
+ 1964 00d2 51       		.byte	0x51
+ 1965 00d3 9F       		.byte	0x9f
+ 1966 00d4 00000000 		.4byte	0
+ 1967 00d8 00000000 		.4byte	0
+ 1968              	.LLST6:
+ 1969 00dc 00000000 		.4byte	.LVL16
+ARM GAS  C:\Users\sergio\AppData\Local\Temp\ccXoQ2wk.s 			page 38
+
+
+ 1970 00e0 05000000 		.4byte	.LVL18-1
+ 1971 00e4 0100     		.2byte	0x1
+ 1972 00e6 50       		.byte	0x50
+ 1973 00e7 05000000 		.4byte	.LVL18-1
+ 1974 00eb 1E000000 		.4byte	.LFE38
+ 1975 00ef 0400     		.2byte	0x4
+ 1976 00f1 F3       		.byte	0xf3
+ 1977 00f2 01       		.uleb128 0x1
+ 1978 00f3 50       		.byte	0x50
+ 1979 00f4 9F       		.byte	0x9f
+ 1980 00f5 00000000 		.4byte	0
+ 1981 00f9 00000000 		.4byte	0
+ 1982              	.LLST7:
+ 1983 00fd 00000000 		.4byte	.LVL16
+ 1984 0101 05000000 		.4byte	.LVL18-1
+ 1985 0105 0100     		.2byte	0x1
+ 1986 0107 51       		.byte	0x51
+ 1987 0108 05000000 		.4byte	.LVL18-1
+ 1988 010c 1E000000 		.4byte	.LFE38
+ 1989 0110 0400     		.2byte	0x4
+ 1990 0112 F3       		.byte	0xf3
+ 1991 0113 01       		.uleb128 0x1
+ 1992 0114 51       		.byte	0x51
+ 1993 0115 9F       		.byte	0x9f
+ 1994 0116 00000000 		.4byte	0
+ 1995 011a 00000000 		.4byte	0
+ 1996              	.LLST8:
+ 1997 011e 02000000 		.4byte	.LVL17
+ 1998 0122 1C000000 		.4byte	.LVL19
+ 1999 0126 0200     		.2byte	0x2
+ 2000 0128 30       		.byte	0x30
+ 2001 0129 9F       		.byte	0x9f
+ 2002 012a 1C000000 		.4byte	.LVL19
+ 2003 012e 1E000000 		.4byte	.LFE38
+ 2004 0132 0100     		.2byte	0x1
+ 2005 0134 50       		.byte	0x50
+ 2006 0135 00000000 		.4byte	0
+ 2007 0139 00000000 		.4byte	0
+ 2008              	.LLST9:
+ 2009 013d 00000000 		.4byte	.LVL20
+ 2010 0141 05000000 		.4byte	.LVL22-1
+ 2011 0145 0100     		.2byte	0x1
+ 2012 0147 50       		.byte	0x50
+ 2013 0148 05000000 		.4byte	.LVL22-1
+ 2014 014c 0A000000 		.4byte	.LFE39
+ 2015 0150 0400     		.2byte	0x4
+ 2016 0152 F3       		.byte	0xf3
+ 2017 0153 01       		.uleb128 0x1
+ 2018 0154 50       		.byte	0x50
+ 2019 0155 9F       		.byte	0x9f
+ 2020 0156 00000000 		.4byte	0
+ 2021 015a 00000000 		.4byte	0
+ 2022              	.LLST10:
+ 2023 015e 00000000 		.4byte	.LVL20
+ 2024 0162 05000000 		.4byte	.LVL22-1
+ 2025 0166 0100     		.2byte	0x1
+ 2026 0168 51       		.byte	0x51
+ARM GAS  C:\Users\sergio\AppData\Local\Temp\ccXoQ2wk.s 			page 39
+
+
+ 2027 0169 05000000 		.4byte	.LVL22-1
+ 2028 016d 0A000000 		.4byte	.LFE39
+ 2029 0171 0400     		.2byte	0x4
+ 2030 0173 F3       		.byte	0xf3
+ 2031 0174 01       		.uleb128 0x1
+ 2032 0175 51       		.byte	0x51
+ 2033 0176 9F       		.byte	0x9f
+ 2034 0177 00000000 		.4byte	0
+ 2035 017b 00000000 		.4byte	0
+ 2036              	.LLST11:
+ 2037 017f 02000000 		.4byte	.LVL21
+ 2038 0183 06000000 		.4byte	.LVL22
+ 2039 0187 0200     		.2byte	0x2
+ 2040 0189 30       		.byte	0x30
+ 2041 018a 9F       		.byte	0x9f
+ 2042 018b 00000000 		.4byte	0
+ 2043 018f 00000000 		.4byte	0
+ 2044              	.LLST12:
+ 2045 0193 00000000 		.4byte	.LVL23
+ 2046 0197 05000000 		.4byte	.LVL25-1
+ 2047 019b 0100     		.2byte	0x1
+ 2048 019d 50       		.byte	0x50
+ 2049 019e 05000000 		.4byte	.LVL25-1
+ 2050 01a2 0A000000 		.4byte	.LFE40
+ 2051 01a6 0400     		.2byte	0x4
+ 2052 01a8 F3       		.byte	0xf3
+ 2053 01a9 01       		.uleb128 0x1
+ 2054 01aa 50       		.byte	0x50
+ 2055 01ab 9F       		.byte	0x9f
+ 2056 01ac 00000000 		.4byte	0
+ 2057 01b0 00000000 		.4byte	0
+ 2058              	.LLST13:
+ 2059 01b4 00000000 		.4byte	.LVL23
+ 2060 01b8 05000000 		.4byte	.LVL25-1
+ 2061 01bc 0100     		.2byte	0x1
+ 2062 01be 51       		.byte	0x51
+ 2063 01bf 05000000 		.4byte	.LVL25-1
+ 2064 01c3 0A000000 		.4byte	.LFE40
+ 2065 01c7 0400     		.2byte	0x4
+ 2066 01c9 F3       		.byte	0xf3
+ 2067 01ca 01       		.uleb128 0x1
+ 2068 01cb 51       		.byte	0x51
+ 2069 01cc 9F       		.byte	0x9f
+ 2070 01cd 00000000 		.4byte	0
+ 2071 01d1 00000000 		.4byte	0
+ 2072              	.LLST14:
+ 2073 01d5 02000000 		.4byte	.LVL24
+ 2074 01d9 06000000 		.4byte	.LVL25
+ 2075 01dd 0200     		.2byte	0x2
+ 2076 01df 30       		.byte	0x30
+ 2077 01e0 9F       		.byte	0x9f
+ 2078 01e1 00000000 		.4byte	0
+ 2079 01e5 00000000 		.4byte	0
+ 2080              	.LLST15:
+ 2081 01e9 00000000 		.4byte	.LVL26
+ 2082 01ed 17000000 		.4byte	.LVL28-1
+ 2083 01f1 0100     		.2byte	0x1
+ARM GAS  C:\Users\sergio\AppData\Local\Temp\ccXoQ2wk.s 			page 40
+
+
+ 2084 01f3 50       		.byte	0x50
+ 2085 01f4 17000000 		.4byte	.LVL28-1
+ 2086 01f8 5A000000 		.4byte	.LVL35
+ 2087 01fc 0100     		.2byte	0x1
+ 2088 01fe 54       		.byte	0x54
+ 2089 01ff 5A000000 		.4byte	.LVL35
+ 2090 0203 60000000 		.4byte	.LFE41
+ 2091 0207 0400     		.2byte	0x4
+ 2092 0209 F3       		.byte	0xf3
+ 2093 020a 01       		.uleb128 0x1
+ 2094 020b 50       		.byte	0x50
+ 2095 020c 9F       		.byte	0x9f
+ 2096 020d 00000000 		.4byte	0
+ 2097 0211 00000000 		.4byte	0
+ 2098              	.LLST16:
+ 2099 0215 00000000 		.4byte	.LVL26
+ 2100 0219 0A000000 		.4byte	.LVL27
+ 2101 021d 0100     		.2byte	0x1
+ 2102 021f 51       		.byte	0x51
+ 2103 0220 0A000000 		.4byte	.LVL27
+ 2104 0224 60000000 		.4byte	.LFE41
+ 2105 0228 0400     		.2byte	0x4
+ 2106 022a F3       		.byte	0xf3
+ 2107 022b 01       		.uleb128 0x1
+ 2108 022c 51       		.byte	0x51
+ 2109 022d 9F       		.byte	0x9f
+ 2110 022e 00000000 		.4byte	0
+ 2111 0232 00000000 		.4byte	0
+ 2112              	.LLST17:
+ 2113 0236 4E000000 		.4byte	.LVL32
+ 2114 023a 51000000 		.4byte	.LVL33-1
+ 2115 023e 0100     		.2byte	0x1
+ 2116 0240 50       		.byte	0x50
+ 2117 0241 00000000 		.4byte	0
+ 2118 0245 00000000 		.4byte	0
+ 2119              	.LLST18:
+ 2120 0249 00000000 		.4byte	.LVL36
+ 2121 024d 05000000 		.4byte	.LVL37-1
+ 2122 0251 0100     		.2byte	0x1
+ 2123 0253 50       		.byte	0x50
+ 2124 0254 05000000 		.4byte	.LVL37-1
+ 2125 0258 18000000 		.4byte	.LFE42
+ 2126 025c 0400     		.2byte	0x4
+ 2127 025e F3       		.byte	0xf3
+ 2128 025f 01       		.uleb128 0x1
+ 2129 0260 50       		.byte	0x50
+ 2130 0261 9F       		.byte	0x9f
+ 2131 0262 00000000 		.4byte	0
+ 2132 0266 00000000 		.4byte	0
+ 2133              	.LLST19:
+ 2134 026a 00000000 		.4byte	.LVL36
+ 2135 026e 05000000 		.4byte	.LVL37-1
+ 2136 0272 0100     		.2byte	0x1
+ 2137 0274 51       		.byte	0x51
+ 2138 0275 05000000 		.4byte	.LVL37-1
+ 2139 0279 18000000 		.4byte	.LFE42
+ 2140 027d 0400     		.2byte	0x4
+ARM GAS  C:\Users\sergio\AppData\Local\Temp\ccXoQ2wk.s 			page 41
+
+
+ 2141 027f F3       		.byte	0xf3
+ 2142 0280 01       		.uleb128 0x1
+ 2143 0281 51       		.byte	0x51
+ 2144 0282 9F       		.byte	0x9f
+ 2145 0283 00000000 		.4byte	0
+ 2146 0287 00000000 		.4byte	0
+ 2147              	.LLST20:
+ 2148 028b 06000000 		.4byte	.LVL37
+ 2149 028f 09000000 		.4byte	.LVL38-1
+ 2150 0293 0100     		.2byte	0x1
+ 2151 0295 50       		.byte	0x50
+ 2152 0296 00000000 		.4byte	0
+ 2153 029a 00000000 		.4byte	0
+ 2154              	.LLST21:
+ 2155 029e 00000000 		.4byte	.LVL40
+ 2156 02a2 05000000 		.4byte	.LVL41-1
+ 2157 02a6 0100     		.2byte	0x1
+ 2158 02a8 50       		.byte	0x50
+ 2159 02a9 05000000 		.4byte	.LVL41-1
+ 2160 02ad 18000000 		.4byte	.LFE43
+ 2161 02b1 0400     		.2byte	0x4
+ 2162 02b3 F3       		.byte	0xf3
+ 2163 02b4 01       		.uleb128 0x1
+ 2164 02b5 50       		.byte	0x50
+ 2165 02b6 9F       		.byte	0x9f
+ 2166 02b7 00000000 		.4byte	0
+ 2167 02bb 00000000 		.4byte	0
+ 2168              	.LLST22:
+ 2169 02bf 00000000 		.4byte	.LVL40
+ 2170 02c3 05000000 		.4byte	.LVL41-1
+ 2171 02c7 0100     		.2byte	0x1
+ 2172 02c9 51       		.byte	0x51
+ 2173 02ca 05000000 		.4byte	.LVL41-1
+ 2174 02ce 18000000 		.4byte	.LFE43
+ 2175 02d2 0400     		.2byte	0x4
+ 2176 02d4 F3       		.byte	0xf3
+ 2177 02d5 01       		.uleb128 0x1
+ 2178 02d6 51       		.byte	0x51
+ 2179 02d7 9F       		.byte	0x9f
+ 2180 02d8 00000000 		.4byte	0
+ 2181 02dc 00000000 		.4byte	0
+ 2182              	.LLST23:
+ 2183 02e0 06000000 		.4byte	.LVL41
+ 2184 02e4 09000000 		.4byte	.LVL42-1
+ 2185 02e8 0100     		.2byte	0x1
+ 2186 02ea 50       		.byte	0x50
+ 2187 02eb 00000000 		.4byte	0
+ 2188 02ef 00000000 		.4byte	0
+ 2189              	.LLST24:
+ 2190 02f3 00000000 		.4byte	.LVL44
+ 2191 02f7 09000000 		.4byte	.LVL45-1
+ 2192 02fb 0100     		.2byte	0x1
+ 2193 02fd 50       		.byte	0x50
+ 2194 02fe 09000000 		.4byte	.LVL45-1
+ 2195 0302 22000000 		.4byte	.LVL52
+ 2196 0306 0100     		.2byte	0x1
+ 2197 0308 55       		.byte	0x55
+ARM GAS  C:\Users\sergio\AppData\Local\Temp\ccXoQ2wk.s 			page 42
+
+
+ 2198 0309 22000000 		.4byte	.LVL52
+ 2199 030d 24000000 		.4byte	.LFE44
+ 2200 0311 0400     		.2byte	0x4
+ 2201 0313 F3       		.byte	0xf3
+ 2202 0314 01       		.uleb128 0x1
+ 2203 0315 50       		.byte	0x50
+ 2204 0316 9F       		.byte	0x9f
+ 2205 0317 00000000 		.4byte	0
+ 2206 031b 00000000 		.4byte	0
+ 2207              	.LLST25:
+ 2208 031f 00000000 		.4byte	.LVL44
+ 2209 0323 09000000 		.4byte	.LVL45-1
+ 2210 0327 0100     		.2byte	0x1
+ 2211 0329 51       		.byte	0x51
+ 2212 032a 09000000 		.4byte	.LVL45-1
+ 2213 032e 24000000 		.4byte	.LFE44
+ 2214 0332 0400     		.2byte	0x4
+ 2215 0334 F3       		.byte	0xf3
+ 2216 0335 01       		.uleb128 0x1
+ 2217 0336 51       		.byte	0x51
+ 2218 0337 9F       		.byte	0x9f
+ 2219 0338 00000000 		.4byte	0
+ 2220 033c 00000000 		.4byte	0
+ 2221              	.LLST26:
+ 2222 0340 00000000 		.4byte	.LVL44
+ 2223 0344 09000000 		.4byte	.LVL45-1
+ 2224 0348 0100     		.2byte	0x1
+ 2225 034a 52       		.byte	0x52
+ 2226 034b 09000000 		.4byte	.LVL45-1
+ 2227 034f 24000000 		.4byte	.LFE44
+ 2228 0353 0400     		.2byte	0x4
+ 2229 0355 F3       		.byte	0xf3
+ 2230 0356 01       		.uleb128 0x1
+ 2231 0357 52       		.byte	0x52
+ 2232 0358 9F       		.byte	0x9f
+ 2233 0359 00000000 		.4byte	0
+ 2234 035d 00000000 		.4byte	0
+ 2235              	.LLST27:
+ 2236 0361 0C000000 		.4byte	.LVL46
+ 2237 0365 1A000000 		.4byte	.LVL49
+ 2238 0369 0100     		.2byte	0x1
+ 2239 036b 54       		.byte	0x54
+ 2240 036c 00000000 		.4byte	0
+ 2241 0370 00000000 		.4byte	0
+ 2242              	.LLST28:
+ 2243 0374 14000000 		.4byte	.LVL47
+ 2244 0378 16000000 		.4byte	.LVL48
+ 2245 037c 0100     		.2byte	0x1
+ 2246 037e 50       		.byte	0x50
+ 2247 037f 00000000 		.4byte	0
+ 2248 0383 00000000 		.4byte	0
+ 2249              	.LLST29:
+ 2250 0387 00000000 		.4byte	.LVL53
+ 2251 038b 09000000 		.4byte	.LVL54-1
+ 2252 038f 0100     		.2byte	0x1
+ 2253 0391 50       		.byte	0x50
+ 2254 0392 09000000 		.4byte	.LVL54-1
+ARM GAS  C:\Users\sergio\AppData\Local\Temp\ccXoQ2wk.s 			page 43
+
+
+ 2255 0396 22000000 		.4byte	.LVL61
+ 2256 039a 0100     		.2byte	0x1
+ 2257 039c 55       		.byte	0x55
+ 2258 039d 22000000 		.4byte	.LVL61
+ 2259 03a1 24000000 		.4byte	.LFE45
+ 2260 03a5 0400     		.2byte	0x4
+ 2261 03a7 F3       		.byte	0xf3
+ 2262 03a8 01       		.uleb128 0x1
+ 2263 03a9 50       		.byte	0x50
+ 2264 03aa 9F       		.byte	0x9f
+ 2265 03ab 00000000 		.4byte	0
+ 2266 03af 00000000 		.4byte	0
+ 2267              	.LLST30:
+ 2268 03b3 00000000 		.4byte	.LVL53
+ 2269 03b7 09000000 		.4byte	.LVL54-1
+ 2270 03bb 0100     		.2byte	0x1
+ 2271 03bd 51       		.byte	0x51
+ 2272 03be 09000000 		.4byte	.LVL54-1
+ 2273 03c2 24000000 		.4byte	.LFE45
+ 2274 03c6 0400     		.2byte	0x4
+ 2275 03c8 F3       		.byte	0xf3
+ 2276 03c9 01       		.uleb128 0x1
+ 2277 03ca 51       		.byte	0x51
+ 2278 03cb 9F       		.byte	0x9f
+ 2279 03cc 00000000 		.4byte	0
+ 2280 03d0 00000000 		.4byte	0
+ 2281              	.LLST31:
+ 2282 03d4 00000000 		.4byte	.LVL53
+ 2283 03d8 09000000 		.4byte	.LVL54-1
+ 2284 03dc 0100     		.2byte	0x1
+ 2285 03de 52       		.byte	0x52
+ 2286 03df 09000000 		.4byte	.LVL54-1
+ 2287 03e3 24000000 		.4byte	.LFE45
+ 2288 03e7 0400     		.2byte	0x4
+ 2289 03e9 F3       		.byte	0xf3
+ 2290 03ea 01       		.uleb128 0x1
+ 2291 03eb 52       		.byte	0x52
+ 2292 03ec 9F       		.byte	0x9f
+ 2293 03ed 00000000 		.4byte	0
+ 2294 03f1 00000000 		.4byte	0
+ 2295              	.LLST32:
+ 2296 03f5 0C000000 		.4byte	.LVL55
+ 2297 03f9 1A000000 		.4byte	.LVL58
+ 2298 03fd 0100     		.2byte	0x1
+ 2299 03ff 54       		.byte	0x54
+ 2300 0400 00000000 		.4byte	0
+ 2301 0404 00000000 		.4byte	0
+ 2302              	.LLST33:
+ 2303 0408 14000000 		.4byte	.LVL56
+ 2304 040c 16000000 		.4byte	.LVL57
+ 2305 0410 0100     		.2byte	0x1
+ 2306 0412 50       		.byte	0x50
+ 2307 0413 00000000 		.4byte	0
+ 2308 0417 00000000 		.4byte	0
+ 2309              	.LLST34:
+ 2310 041b 00000000 		.4byte	.LVL62
+ 2311 041f 09000000 		.4byte	.LVL63-1
+ARM GAS  C:\Users\sergio\AppData\Local\Temp\ccXoQ2wk.s 			page 44
+
+
+ 2312 0423 0100     		.2byte	0x1
+ 2313 0425 50       		.byte	0x50
+ 2314 0426 09000000 		.4byte	.LVL63-1
+ 2315 042a 22000000 		.4byte	.LVL70
+ 2316 042e 0100     		.2byte	0x1
+ 2317 0430 55       		.byte	0x55
+ 2318 0431 22000000 		.4byte	.LVL70
+ 2319 0435 24000000 		.4byte	.LFE46
+ 2320 0439 0400     		.2byte	0x4
+ 2321 043b F3       		.byte	0xf3
+ 2322 043c 01       		.uleb128 0x1
+ 2323 043d 50       		.byte	0x50
+ 2324 043e 9F       		.byte	0x9f
+ 2325 043f 00000000 		.4byte	0
+ 2326 0443 00000000 		.4byte	0
+ 2327              	.LLST35:
+ 2328 0447 00000000 		.4byte	.LVL62
+ 2329 044b 09000000 		.4byte	.LVL63-1
+ 2330 044f 0100     		.2byte	0x1
+ 2331 0451 51       		.byte	0x51
+ 2332 0452 09000000 		.4byte	.LVL63-1
+ 2333 0456 24000000 		.4byte	.LFE46
+ 2334 045a 0400     		.2byte	0x4
+ 2335 045c F3       		.byte	0xf3
+ 2336 045d 01       		.uleb128 0x1
+ 2337 045e 51       		.byte	0x51
+ 2338 045f 9F       		.byte	0x9f
+ 2339 0460 00000000 		.4byte	0
+ 2340 0464 00000000 		.4byte	0
+ 2341              	.LLST36:
+ 2342 0468 00000000 		.4byte	.LVL62
+ 2343 046c 09000000 		.4byte	.LVL63-1
+ 2344 0470 0100     		.2byte	0x1
+ 2345 0472 52       		.byte	0x52
+ 2346 0473 09000000 		.4byte	.LVL63-1
+ 2347 0477 24000000 		.4byte	.LFE46
+ 2348 047b 0400     		.2byte	0x4
+ 2349 047d F3       		.byte	0xf3
+ 2350 047e 01       		.uleb128 0x1
+ 2351 047f 52       		.byte	0x52
+ 2352 0480 9F       		.byte	0x9f
+ 2353 0481 00000000 		.4byte	0
+ 2354 0485 00000000 		.4byte	0
+ 2355              	.LLST37:
+ 2356 0489 0C000000 		.4byte	.LVL64
+ 2357 048d 1A000000 		.4byte	.LVL67
+ 2358 0491 0100     		.2byte	0x1
+ 2359 0493 54       		.byte	0x54
+ 2360 0494 00000000 		.4byte	0
+ 2361 0498 00000000 		.4byte	0
+ 2362              	.LLST38:
+ 2363 049c 14000000 		.4byte	.LVL65
+ 2364 04a0 16000000 		.4byte	.LVL66
+ 2365 04a4 0100     		.2byte	0x1
+ 2366 04a6 50       		.byte	0x50
+ 2367 04a7 00000000 		.4byte	0
+ 2368 04ab 00000000 		.4byte	0
+ARM GAS  C:\Users\sergio\AppData\Local\Temp\ccXoQ2wk.s 			page 45
+
+
+ 2369              	.LLST39:
+ 2370 04af 00000000 		.4byte	.LVL71
+ 2371 04b3 05000000 		.4byte	.LVL72-1
+ 2372 04b7 0100     		.2byte	0x1
+ 2373 04b9 50       		.byte	0x50
+ 2374 04ba 05000000 		.4byte	.LVL72-1
+ 2375 04be 0A000000 		.4byte	.LFE47
+ 2376 04c2 0400     		.2byte	0x4
+ 2377 04c4 F3       		.byte	0xf3
+ 2378 04c5 01       		.uleb128 0x1
+ 2379 04c6 50       		.byte	0x50
+ 2380 04c7 9F       		.byte	0x9f
+ 2381 04c8 00000000 		.4byte	0
+ 2382 04cc 00000000 		.4byte	0
+ 2383              	.LLST40:
+ 2384 04d0 00000000 		.4byte	.LVL71
+ 2385 04d4 05000000 		.4byte	.LVL72-1
+ 2386 04d8 0100     		.2byte	0x1
+ 2387 04da 51       		.byte	0x51
+ 2388 04db 05000000 		.4byte	.LVL72-1
+ 2389 04df 0A000000 		.4byte	.LFE47
+ 2390 04e3 0400     		.2byte	0x4
+ 2391 04e5 F3       		.byte	0xf3
+ 2392 04e6 01       		.uleb128 0x1
+ 2393 04e7 51       		.byte	0x51
+ 2394 04e8 9F       		.byte	0x9f
+ 2395 04e9 00000000 		.4byte	0
+ 2396 04ed 00000000 		.4byte	0
+ 2397              		.section	.debug_aranges,"",%progbits
+ 2398 0000 7C000000 		.4byte	0x7c
+ 2399 0004 0200     		.2byte	0x2
+ 2400 0006 00000000 		.4byte	.Ldebug_info0
+ 2401 000a 04       		.byte	0x4
+ 2402 000b 00       		.byte	0
+ 2403 000c 0000     		.2byte	0
+ 2404 000e 0000     		.2byte	0
+ 2405 0010 00000000 		.4byte	.LFB35
+ 2406 0014 46000000 		.4byte	.LFE35-.LFB35
+ 2407 0018 00000000 		.4byte	.LFB36
+ 2408 001c 42000000 		.4byte	.LFE36-.LFB36
+ 2409 0020 00000000 		.4byte	.LFB37
+ 2410 0024 0E000000 		.4byte	.LFE37-.LFB37
+ 2411 0028 00000000 		.4byte	.LFB38
+ 2412 002c 1E000000 		.4byte	.LFE38-.LFB38
+ 2413 0030 00000000 		.4byte	.LFB39
+ 2414 0034 0A000000 		.4byte	.LFE39-.LFB39
+ 2415 0038 00000000 		.4byte	.LFB40
+ 2416 003c 0A000000 		.4byte	.LFE40-.LFB40
+ 2417 0040 00000000 		.4byte	.LFB41
+ 2418 0044 60000000 		.4byte	.LFE41-.LFB41
+ 2419 0048 00000000 		.4byte	.LFB42
+ 2420 004c 18000000 		.4byte	.LFE42-.LFB42
+ 2421 0050 00000000 		.4byte	.LFB43
+ 2422 0054 18000000 		.4byte	.LFE43-.LFB43
+ 2423 0058 00000000 		.4byte	.LFB44
+ 2424 005c 24000000 		.4byte	.LFE44-.LFB44
+ 2425 0060 00000000 		.4byte	.LFB45
+ARM GAS  C:\Users\sergio\AppData\Local\Temp\ccXoQ2wk.s 			page 46
+
+
+ 2426 0064 24000000 		.4byte	.LFE45-.LFB45
+ 2427 0068 00000000 		.4byte	.LFB46
+ 2428 006c 24000000 		.4byte	.LFE46-.LFB46
+ 2429 0070 00000000 		.4byte	.LFB47
+ 2430 0074 0A000000 		.4byte	.LFE47-.LFB47
+ 2431 0078 00000000 		.4byte	0
+ 2432 007c 00000000 		.4byte	0
+ 2433              		.section	.debug_ranges,"",%progbits
+ 2434              	.Ldebug_ranges0:
+ 2435 0000 00000000 		.4byte	.LFB35
+ 2436 0004 46000000 		.4byte	.LFE35
+ 2437 0008 00000000 		.4byte	.LFB36
+ 2438 000c 42000000 		.4byte	.LFE36
+ 2439 0010 00000000 		.4byte	.LFB37
+ 2440 0014 0E000000 		.4byte	.LFE37
+ 2441 0018 00000000 		.4byte	.LFB38
+ 2442 001c 1E000000 		.4byte	.LFE38
+ 2443 0020 00000000 		.4byte	.LFB39
+ 2444 0024 0A000000 		.4byte	.LFE39
+ 2445 0028 00000000 		.4byte	.LFB40
+ 2446 002c 0A000000 		.4byte	.LFE40
+ 2447 0030 00000000 		.4byte	.LFB41
+ 2448 0034 60000000 		.4byte	.LFE41
+ 2449 0038 00000000 		.4byte	.LFB42
+ 2450 003c 18000000 		.4byte	.LFE42
+ 2451 0040 00000000 		.4byte	.LFB43
+ 2452 0044 18000000 		.4byte	.LFE43
+ 2453 0048 00000000 		.4byte	.LFB44
+ 2454 004c 24000000 		.4byte	.LFE44
+ 2455 0050 00000000 		.4byte	.LFB45
+ 2456 0054 24000000 		.4byte	.LFE45
+ 2457 0058 00000000 		.4byte	.LFB46
+ 2458 005c 24000000 		.4byte	.LFE46
+ 2459 0060 00000000 		.4byte	.LFB47
+ 2460 0064 0A000000 		.4byte	.LFE47
+ 2461 0068 00000000 		.4byte	0
+ 2462 006c 00000000 		.4byte	0
+ 2463              		.section	.debug_line,"",%progbits
+ 2464              	.Ldebug_line0:
+ 2465 0000 76010000 		.section	.debug_str,"MS",%progbits,1
+ 2465      02005200 
+ 2465      00000201 
+ 2465      FB0E0D00 
+ 2465      01010101 
+ 2466              	.LASF35:
+ 2467 0000 74656D4C 		.ascii	"temLFreq\000"
+ 2467      46726571 
+ 2467      00
+ 2468              	.LASF25:
+ 2469 0009 74656D70 		.ascii	"temperature_local_read\000"
+ 2469      65726174 
+ 2469      7572655F 
+ 2469      6C6F6361 
+ 2469      6C5F7265 
+ 2470              	.LASF4:
+ 2471 0020 6C6F6E67 		.ascii	"long int\000"
+ 2471      20696E74 
+ARM GAS  C:\Users\sergio\AppData\Local\Temp\ccXoQ2wk.s 			page 47
+
+
+ 2471      00
+ 2472              	.LASF19:
+ 2473 0029 72656164 		.ascii	"read_buff\000"
+ 2473      5F627566 
+ 2473      6600
+ 2474              	.LASF3:
+ 2475 0033 73686F72 		.ascii	"short unsigned int\000"
+ 2475      7420756E 
+ 2475      7369676E 
+ 2475      65642069 
+ 2475      6E7400
+ 2476              	.LASF22:
+ 2477 0046 74657374 		.ascii	"test_sensor\000"
+ 2477      5F73656E 
+ 2477      736F7200 
+ 2478              	.LASF41:
+ 2479 0052 7A5F6163 		.ascii	"z_accelerometer_read\000"
+ 2479      63656C65 
+ 2479      726F6D65 
+ 2479      7465725F 
+ 2479      72656164 
+ 2480              	.LASF31:
+ 2481 0067 766F6C74 		.ascii	"voltage_read\000"
+ 2481      6167655F 
+ 2481      72656164 
+ 2481      00
+ 2482              	.LASF12:
+ 2483 0074 666C6F61 		.ascii	"float\000"
+ 2483      7400
+ 2484              	.LASF7:
+ 2485 007a 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 2485      206C6F6E 
+ 2485      6720756E 
+ 2485      7369676E 
+ 2485      65642069 
+ 2486              	.LASF26:
+ 2487 0091 74656D70 		.ascii	"temperature\000"
+ 2487      65726174 
+ 2487      75726500 
+ 2488              	.LASF38:
+ 2489 009d 7265674C 		.ascii	"regLSB\000"
+ 2489      534200
+ 2490              	.LASF1:
+ 2491 00a4 756E7369 		.ascii	"unsigned char\000"
+ 2491      676E6564 
+ 2491      20636861 
+ 2491      7200
+ 2492              	.LASF40:
+ 2493 00b2 795F6163 		.ascii	"y_accelerometer_read\000"
+ 2493      63656C65 
+ 2493      726F6D65 
+ 2493      7465725F 
+ 2493      72656164 
+ 2494              	.LASF5:
+ 2495 00c7 6C6F6E67 		.ascii	"long unsigned int\000"
+ 2495      20756E73 
+ 2495      69676E65 
+ARM GAS  C:\Users\sergio\AppData\Local\Temp\ccXoQ2wk.s 			page 48
+
+
+ 2495      6420696E 
+ 2495      7400
+ 2496              	.LASF9:
+ 2497 00d9 75696E74 		.ascii	"uint8\000"
+ 2497      3800
+ 2498              	.LASF23:
+ 2499 00df 68756D69 		.ascii	"humidity_read\000"
+ 2499      64697479 
+ 2499      5F726561 
+ 2499      6400
+ 2500              	.LASF37:
+ 2501 00ed 785F6163 		.ascii	"x_accelerometer_read\000"
+ 2501      63656C65 
+ 2501      726F6D65 
+ 2501      7465725F 
+ 2501      72656164 
+ 2502              	.LASF36:
+ 2503 0102 666F726D 		.ascii	"formattedLineFrequency\000"
+ 2503      61747465 
+ 2503      644C696E 
+ 2503      65467265 
+ 2503      7175656E 
+ 2504              	.LASF29:
+ 2505 0119 74656D70 		.ascii	"tempCurrent\000"
+ 2505      43757272 
+ 2505      656E7400 
+ 2506              	.LASF42:
+ 2507 0125 6770696F 		.ascii	"gpio_expander_read\000"
+ 2507      5F657870 
+ 2507      616E6465 
+ 2507      725F7265 
+ 2507      616400
+ 2508              	.LASF13:
+ 2509 0138 646F7562 		.ascii	"double\000"
+ 2509      6C6500
+ 2510              	.LASF10:
+ 2511 013f 75696E74 		.ascii	"uint16\000"
+ 2511      313600
+ 2512              	.LASF24:
+ 2513 0146 68756D69 		.ascii	"humidity\000"
+ 2513      64697479 
+ 2513      00
+ 2514              	.LASF49:
+ 2515 014f 72656164 		.ascii	"read\000"
+ 2515      00
+ 2516              	.LASF33:
+ 2517 0154 666F726D 		.ascii	"formattedVolt\000"
+ 2517      61747465 
+ 2517      64566F6C 
+ 2517      7400
+ 2518              	.LASF11:
+ 2519 0162 75696E74 		.ascii	"uint32\000"
+ 2519      333200
+ 2520              	.LASF8:
+ 2521 0169 756E7369 		.ascii	"unsigned int\000"
+ 2521      676E6564 
+ 2521      20696E74 
+ARM GAS  C:\Users\sergio\AppData\Local\Temp\ccXoQ2wk.s 			page 49
+
+
+ 2521      00
+ 2522              	.LASF18:
+ 2523 0176 77726974 		.ascii	"write_buff\000"
+ 2523      655F6275 
+ 2523      666600
+ 2524              	.LASF17:
+ 2525 0181 61646472 		.ascii	"address\000"
+ 2525      65737300 
+ 2526              	.LASF14:
+ 2527 0189 63686172 		.ascii	"char\000"
+ 2527      00
+ 2528              	.LASF34:
+ 2529 018e 6C696E65 		.ascii	"line_frequency_read\000"
+ 2529      5F667265 
+ 2529      7175656E 
+ 2529      63795F72 
+ 2529      65616400 
+ 2530              	.LASF39:
+ 2531 01a2 7265674D 		.ascii	"regMSB\000"
+ 2531      534200
+ 2532              	.LASF20:
+ 2533 01a9 52656164 		.ascii	"Read_sensor_word\000"
+ 2533      5F73656E 
+ 2533      736F725F 
+ 2533      776F7264 
+ 2533      00
+ 2534              	.LASF47:
+ 2535 01ba 53445F49 		.ascii	"SD_I2C.c\000"
+ 2535      32432E63 
+ 2535      00
+ 2536              	.LASF46:
+ 2537 01c3 474E5520 		.ascii	"GNU C11 5.4.1 20160609 (release) [ARM/embedded-5-br"
+ 2537      43313120 
+ 2537      352E342E 
+ 2537      31203230 
+ 2537      31363036 
+ 2538 01f6 616E6368 		.ascii	"anch revision 237715] -mcpu=cortex-m0 -mthumb -g -O"
+ 2538      20726576 
+ 2538      6973696F 
+ 2538      6E203233 
+ 2538      37373135 
+ 2539 0229 67202D66 		.ascii	"g -ffunction-sections -ffat-lto-objects\000"
+ 2539      66756E63 
+ 2539      74696F6E 
+ 2539      2D736563 
+ 2539      74696F6E 
+ 2540              	.LASF21:
+ 2541 0251 52656164 		.ascii	"Read_sensor_byte\000"
+ 2541      5F73656E 
+ 2541      736F725F 
+ 2541      62797465 
+ 2541      00
+ 2542              	.LASF30:
+ 2543 0262 666F726D 		.ascii	"formattedCurrent\000"
+ 2543      61747465 
+ 2543      64437572 
+ 2543      72656E74 
+ARM GAS  C:\Users\sergio\AppData\Local\Temp\ccXoQ2wk.s 			page 50
+
+
+ 2543      00
+ 2544              	.LASF16:
+ 2545 0273 73697A65 		.ascii	"sizetype\000"
+ 2545      74797065 
+ 2545      00
+ 2546              	.LASF6:
+ 2547 027c 6C6F6E67 		.ascii	"long long int\000"
+ 2547      206C6F6E 
+ 2547      6720696E 
+ 2547      7400
+ 2548              	.LASF45:
+ 2549 028a 4932435F 		.ascii	"I2C_1_I2CMasterReadBuf\000"
+ 2549      315F4932 
+ 2549      434D6173 
+ 2549      74657252 
+ 2549      65616442 
+ 2550              	.LASF2:
+ 2551 02a1 73686F72 		.ascii	"short int\000"
+ 2551      7420696E 
+ 2551      7400
+ 2552              	.LASF27:
+ 2553 02ab 74656D70 		.ascii	"temperature_remote_read\000"
+ 2553      65726174 
+ 2553      7572655F 
+ 2553      72656D6F 
+ 2553      74655F72 
+ 2554              	.LASF48:
+ 2555 02c3 433A5C55 		.ascii	"C:\\Users\\sergio\\Documents\\PSoC Creator\\demo\\S"
+ 2555      73657273 
+ 2555      5C736572 
+ 2555      67696F5C 
+ 2555      446F6375 
+ 2556 02f0 44424C45 		.ascii	"DBLEE.cydsn\000"
+ 2556      452E6379 
+ 2556      64736E00 
+ 2557              	.LASF44:
+ 2558 02fc 4932435F 		.ascii	"I2C_1_I2CMasterStatus\000"
+ 2558      315F4932 
+ 2558      434D6173 
+ 2558      74657253 
+ 2558      74617475 
+ 2559              	.LASF32:
+ 2560 0312 74656D70 		.ascii	"tempVolt\000"
+ 2560      566F6C74 
+ 2560      00
+ 2561              	.LASF15:
+ 2562 031b 6C6F6E67 		.ascii	"long double\000"
+ 2562      20646F75 
+ 2562      626C6500 
+ 2563              	.LASF0:
+ 2564 0327 7369676E 		.ascii	"signed char\000"
+ 2564      65642063 
+ 2564      68617200 
+ 2565              	.LASF28:
+ 2566 0333 63757272 		.ascii	"current_read\000"
+ 2566      656E745F 
+ 2566      72656164 
+ARM GAS  C:\Users\sergio\AppData\Local\Temp\ccXoQ2wk.s 			page 51
+
+
+ 2566      00
+ 2567              	.LASF43:
+ 2568 0340 4932435F 		.ascii	"I2C_1_I2CMasterWriteBuf\000"
+ 2568      315F4932 
+ 2568      434D6173 
+ 2568      74657257 
+ 2568      72697465 
+ 2569              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 5.4.1 20160609 (release) [ARM/embedded-5-bran
